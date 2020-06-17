@@ -16,6 +16,7 @@ import { api, platforms } from 'call-of-duty-api-es6';
 import Gestures from 'react-native-easy-gestures';
 import Accordion from 'react-native-collapsible/Accordion';
 import ProgressBar from 'react-native-progress/Bar';
+// import MapScreen from "./src/MapScreen";
 
 const TopNav = createMaterialTopTabNavigator();
 const DrawerNav = createDrawerNavigator();
