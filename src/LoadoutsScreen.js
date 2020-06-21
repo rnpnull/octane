@@ -82,7 +82,8 @@ const LoadoutTabNavigator = () => {
 }
 
 const AssemblyScreen = ({ navigation }) => {
-  const [ loadoutState, setLoadoutState ] = useState({subtitle: 'Primary Weapon', title: 'Select', image: require('../assets/ar/fal.png')});
+  const [ primaryState, setPrimaryState ] = useState({subtitle: 'Primary Weapon', title: 'Select', image: require('../assets/ar/fal.png')});
+  const [ secondaryState, setSecondaryState ] = useState({subtitle: 'Secondary Weapon', title: 'Select', image: require('../assets/hg/1911.png')});
   const theme = useTheme();
 
   return (
@@ -93,15 +94,21 @@ const AssemblyScreen = ({ navigation }) => {
         accessoryLeft={() => <RenderBackAction/>}
       />
       <Layout style={{ flex: 1, alignItems: 'center' }}>
-        <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0 }}>
-          <Text style={{ color: theme['text-hint-color'], fontSize: 14 }}>{loadoutState.subtitle}</Text>
-          <Text category='h6'>{loadoutState.title}</Text>
-          <Image source={loadoutState.image} resizeMode='contain' style={{ width: 256, height: 128 }}/>
+        <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Primary', { setter: setPrimaryState } ); }}>
+          <Text style={{ color: theme['text-hint-color'], fontSize: 14 }}>{primaryState.subtitle}</Text>
+          <Text category='h6'>{primaryState.title}</Text>
+          <Image source={primaryState.image} resizeMode='contain' style={{ width: 256, height: 128, alignSelf: 'center' }}/>
+        </Card>
+        <Text/>
+        <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Secondary', { setter: setSecondaryState } ); }}>
+          <Text style={{ color: theme['text-hint-color'], fontSize: 14 }}>{secondaryState.subtitle}</Text>
+          <Text category='h6'>{secondaryState.title}</Text>
+          <Image source={secondaryState.image} resizeMode='contain' style={{ width: 256, height: 128, alignSelf: 'center' }}/>
         </Card>
         <Text/>
         <Text category='h1' style={{textAlign:'center'}}>WHERE'S YOUR DATA?</Text>
         <Text/>
-        <Button onPress={() => { navigation.push('Attachment', { setter: setLoadoutState } ); }}>GET THE EXTENDO</Button>
+        <Button onPress={() => { navigation.push('Attachment', { setter: setPrimaryState } ); }}>GET THE EXTENDO</Button>
       </Layout>
     </>
   );

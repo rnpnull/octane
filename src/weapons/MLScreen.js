@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { View, ScrollView, Image } from 'react-native';
-import { Text, useTheme, Layout } from '@ui-kitten/components';
+import { Button, Text, useTheme, Layout } from '@ui-kitten/components';
 import Accordion from 'react-native-collapsible/Accordion';
 import ProgressBar from 'react-native-progress/Bar';
 
-export default () => {
+export default ({ route }) => {
   const theme = useTheme();
   const SECTIONS = [
     {
@@ -61,6 +61,15 @@ export default () => {
   };
 
   const _renderContent = section => {
+    var selectButton = <></>;
+    if (route.params.showSelector) {
+      selectButton = <>
+        <Text />
+        <Text />
+        <Button onPress={() => {route.params.buildSetter({subtitle: section.subtitle, title: section.title, image: section.image}); route.params.returnFunc(); }}>SELECT</Button>
+      </>;
+    }
+
     return (
       <View style={{ padding: '4%', backgroundColor: theme['background-basic-color-1'] }}>
         <Text>{section.content}</Text>
@@ -115,6 +124,7 @@ export default () => {
             <ProgressBar animated={false} color={theme['text-primary-color']} progress={section.control / 100} width={null} borderRadius={0} />
           </View>
         </View>
+        {selectButton}
       </View>
     );
   };
