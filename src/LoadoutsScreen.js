@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Image } from 'react-native';
+import { Image, ScrollView } from 'react-native';
 import { Card, Text, Layout, Button, useTheme, TopNavigation, TopNavigationAction, Icon } from '@ui-kitten/components';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
@@ -94,38 +94,40 @@ const AssemblyScreen = ({ navigation }) => {
         title='Loadout Builder'
         accessoryLeft={() => <RenderBackAction/>}
       />
-      <Layout style={{ flex: 1, alignItems: 'center' }}>
-        <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Primary', { setter: setPrimaryState } ); }}>
-          <Text style={{ color: theme['text-hint-color'], fontSize: 14 }}>{primaryState.subtitle}</Text>
-          <Text category='h6'>{primaryState.title}</Text>
-          <Image source={primaryState.image} resizeMode='contain' style={{ width: 256, height: 128, alignSelf: 'center' }}/>
-        </Card>
-        <Text/>
-        <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Secondary', { setter: setSecondaryState } ); }}>
-          <Text style={{ color: theme['text-hint-color'], fontSize: 14 }}>{secondaryState.subtitle}</Text>
-          <Text category='h6'>{secondaryState.title}</Text>
-          <Image source={secondaryState.image} resizeMode='contain' style={{ width: 256, height: 128, alignSelf: 'center' }}/>
-        </Card>
-        <Text/>
-        <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Perk1'); }}>
-          <Text category='h6'>Test Perk Selector</Text>
-          <Image source={require('../assets/perks/eod.png')} resizeMode='contain' style={{ width: 128, height: 128, alignSelf: 'center' }}/>
-        </Card>
-        <Text/>
-        <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Lethal'); }}>
-          <Text category='h6'>Test Lethal Selector</Text>
-          <Image source={require('../assets/perks/eod.png')} resizeMode='contain' style={{ width: 128, height: 128, alignSelf: 'center' }}/>
-        </Card>
-        <Text/>
-        <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Tactical'); }}>
-          <Text category='h6'>Test Tactical Selector</Text>
-          <Image source={require('../assets/perks/eod.png')} resizeMode='contain' style={{ width: 128, height: 128, alignSelf: 'center' }}/>
-        </Card>
-        <Text/>
-        <Text category='h1' style={{textAlign:'center'}}>WHERE'S YOUR DATA?</Text>
-        <Text/>
-        <Button onPress={() => { navigation.push('Attachment', { setter: setPrimaryState } ); }}>GET THE EXTENDO</Button>
-      </Layout>
+      <ScrollView style={{ backgroundColor: theme['background-basic-color-1'] }}>
+        <Layout style={{ flex: 1, alignItems: 'center' }}>
+          <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Primary', { setter: setPrimaryState } ); }}>
+            <Text style={{ color: theme['text-hint-color'], fontSize: 14 }}>{primaryState.subtitle}</Text>
+            <Text category='h6'>{primaryState.title}</Text>
+            <Image source={primaryState.image} resizeMode='contain' style={{ width: 256, height: 128, alignSelf: 'center' }}/>
+          </Card>
+          <Text/>
+          <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Secondary', { setter: setSecondaryState } ); }}>
+            <Text style={{ color: theme['text-hint-color'], fontSize: 14 }}>{secondaryState.subtitle}</Text>
+            <Text category='h6'>{secondaryState.title}</Text>
+            <Image source={secondaryState.image} resizeMode='contain' style={{ width: 256, height: 128, alignSelf: 'center' }}/>
+          </Card>
+          <Text/>
+          <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Perk1'); }}>
+            <Text category='h6' style={{ textAlign: 'center' }}>Test Perk Selector</Text>
+            <Image source={require('../assets/perks/eod.png')} resizeMode='contain' style={{ width: 128, height: 128, alignSelf: 'center' }}/>
+          </Card>
+          <Text/>
+          <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Lethal'); }}>
+            <Text category='h6' style={{ textAlign: 'center' }}>Test Lethal Selector</Text>
+            <Image source={require('../assets/lethals/frag.png')} resizeMode='contain' style={{ width: 128, height: 128, alignSelf: 'center' }}/>
+          </Card>
+          <Text/>
+          <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Tactical'); }}>
+            <Text category='h6' style={{ textAlign: 'center' }}>Test Tactical Selector</Text>
+            <Image source={require('../assets/tacticals/stim.png')} resizeMode='contain' style={{ width: 128, height: 128, alignSelf: 'center' }}/>
+          </Card>
+          <Text/>
+          <Text category='h1' style={{textAlign:'center'}}>WHERE'S YOUR DATA?</Text>
+          <Text/>
+          <Button onPress={() => { navigation.push('Attachment', { setter: setPrimaryState } ); }}>GET THE EXTENDO</Button>
+        </Layout>
+      </ScrollView>
     </>
   );
 }
