@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { ScrollView, Image, View} from 'react-native';
-import { Text, Layout, useTheme, TopNavigation, TopNavigationAction, Icon, Radio } from '@ui-kitten/components';
+import { ScrollView, Image, View } from 'react-native';
+import { Text, Layout, useTheme, TopNavigation, TopNavigationAction, Icon, Radio, Button } from '@ui-kitten/components';
 import { useNavigation } from '@react-navigation/native';
 import Accordion from 'react-native-collapsible/Accordion';
 
@@ -16,30 +16,38 @@ const RenderBackAction = () => {
   )
 };
 
-const BaseSelector = ({ items }) => {
+const BaseSelector = ({ items, setter, category }) => {
     const theme = useTheme();
+    const navigation = useNavigation();
 
     const [ activeState, setActiveState ] = useState([]);
 
     const _renderHeader = section => {
-    return (
-        <View style={{ paddingBottom: '4%', paddingLeft: '4%', paddingRight: '4%', backgroundColor: theme['background-basic-color-2'], borderTopWidth: (section.first ? 0 : 4), borderColor: theme['background-basic-color-1'], flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Image source={section.image} resizeMode='contain' style={{ width: 48, height: 48 }}/>
-                <Text style={{ fontWeight: 'bold' }}>{section.title}</Text>
-                <Radio></Radio>
-        </View>
-    );
+        return (
+            <View style={{ paddingBottom: '4%', paddingLeft: '4%', paddingRight: '4%', backgroundColor: theme['background-basic-color-2'], borderTopWidth: (section.first ? 0 : 4), borderColor: theme['background-basic-color-1'], flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Image source={section.image} resizeMode='contain' style={{ width: 48, height: 48 }}/>
+                    <Text style={{ fontWeight: 'bold' }}>{section.title}</Text>
+                    <Radio></Radio>
+            </View>
+        );
     };
 
     const _renderContent = section => {
-    var selectButton = <></>;
+        var selectButton = <></>;
+        if (true) {
+            selectButton = <>
+                <Text />
+                <Text />
+                <Button onPress={() => {setter({subtitle: category, title: section.title, image: section.image}); navigation.goBack(); }}>SELECT</Button>
+            </>;
+        }
 
-    return (
-        <View style={{ padding: '4%', backgroundColor: theme['background-basic-color-1'] }}>
-        <Text>{section.content}</Text>
-        {selectButton}
-        </View>
-    );
+        return (
+            <View style={{ padding: '4%', backgroundColor: theme['background-basic-color-1'] }}>
+                <Text>{section.content}</Text>
+                {selectButton}
+            </View>
+        );
     };
 
     return (
@@ -92,14 +100,14 @@ const perk1List = [
   ];
 
 
-export const Perk1Screen = () => (
+export const Perk1Screen = ({ route }) => (
   <>
     <TopNavigation
         alignment='center'
         title='Perk 1'
         accessoryLeft={() => <RenderBackAction />}
     />
-    <BaseSelector items={perk1List}/>
+    <BaseSelector items={perk1List} setter={route.params.setter} category='Perk 1'/>
   </>
 );
 
@@ -144,7 +152,7 @@ export const Perk2Screen = ({ route }) => (
         title='Perk 2'
         accessoryLeft={() => <RenderBackAction />}
     />
-    <BaseSelector items={perk2List}/>
+    <BaseSelector items={perk2List} setter={route.params.setter} category='Perk 2'/>
   </>
 );
 
@@ -189,7 +197,7 @@ export const Perk3Screen = ({ route }) => (
         title='Perk 3'
         accessoryLeft={() => <RenderBackAction />}
     />
-    <BaseSelector items={perk3List}/>
+    <BaseSelector items={perk3List} setter={route.params.setter} category='Perk 3'/>
   </>
 );
 
@@ -244,7 +252,7 @@ export const LethalScreen = ({ route }) => (
         title='Lethal'
         accessoryLeft={() => <RenderBackAction />}
     />
-    <BaseSelector items={lethalsList}/>
+    <BaseSelector items={lethalsList} setter={route.params.setter} category='Lethal'/>
   </>
 );
 
@@ -299,6 +307,6 @@ export const TacticalScreen = ({ route }) => (
         title='Tactical'
         accessoryLeft={() => <RenderBackAction />}
     />
-    <BaseSelector items={tacticalsList}/>
+    <BaseSelector items={tacticalsList} setter={route.params.setter} category='Tactical'/>
   </>
 );
