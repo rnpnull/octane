@@ -39,7 +39,7 @@ const RenderBackAction = () => {
   )
 };
 
-const WeaponsTabNavigator = ({ type, setter }) => {
+const WeaponsTabNavigator = ({ type, state, setter }) => {
   const navigation = useNavigation();
 
   const theme = useTheme();
@@ -57,12 +57,12 @@ const WeaponsTabNavigator = ({ type, setter }) => {
         }}
         style={{ backgroundColor: theme['background-basic-color-1'] }}
       >
-        <TopNav.Screen name='Assault Rifles' component={ARScreen} initialParams={{ showSelector: true, buildSetter: setter, returnFunc: navigation.goBack }}/>
-        <TopNav.Screen name='SMGs' component={SMGScreen} initialParams={{ showSelector: true, buildSetter: setter, returnFunc: navigation.goBack }}/>
-        <TopNav.Screen name='Shotguns' component={SGScreen} initialParams={{ showSelector: true, buildSetter: setter, returnFunc: navigation.goBack }}/>
-        <TopNav.Screen name='LMGs' component={LMGScreen} initialParams={{ showSelector: true, buildSetter: setter, returnFunc: navigation.goBack }}/>
-        <TopNav.Screen name='Marksman Rifles' component={MRScreen} initialParams={{ showSelector: true, buildSetter: setter, returnFunc: navigation.goBack }}/>
-        <TopNav.Screen name='Sniper Rifles' component={SRScreen} initialParams={{ showSelector: true, buildSetter: setter, returnFunc: navigation.goBack }}/>
+        <TopNav.Screen name='Assault Rifles' component={ARScreen} initialParams={{ showSelector: true, buildState: state, buildSetter: setter, returnFunc: navigation.goBack }}/>
+        <TopNav.Screen name='SMGs' component={SMGScreen} initialParams={{ showSelector: true, buildState: state, buildSetter: setter, returnFunc: navigation.goBack }}/>
+        <TopNav.Screen name='Shotguns' component={SGScreen} initialParams={{ showSelector: true, buildState: state, buildSetter: setter, returnFunc: navigation.goBack }}/>
+        <TopNav.Screen name='LMGs' component={LMGScreen} initialParams={{ showSelector: true, buildState: state, buildSetter: setter, returnFunc: navigation.goBack }}/>
+        <TopNav.Screen name='Marksman Rifles' component={MRScreen} initialParams={{ showSelector: true, buildState: state, buildSetter: setter, returnFunc: navigation.goBack }}/>
+        <TopNav.Screen name='Sniper Rifles' component={SRScreen} initialParams={{ showSelector: true, buildState: state, buildSetter: setter, returnFunc: navigation.goBack }}/>
       </TopNav.Navigator>
     );
   } else if (type == 'secondary') {
@@ -79,9 +79,9 @@ const WeaponsTabNavigator = ({ type, setter }) => {
         }}
         style={{ backgroundColor: theme['background-basic-color-1'] }}
       >
-        <TopNav.Screen name='Handguns' component={HGScreen} initialParams={{ showSelector: true, buildSetter: setter, returnFunc: navigation.goBack }}/>
-        <TopNav.Screen name='Launchers' component={LCScreen} initialParams={{ showSelector: true, buildSetter: setter, returnFunc: navigation.goBack }}/>
-        <TopNav.Screen name='Melee' component={MLScreen} initialParams={{ showSelector: true, buildSetter: setter, returnFunc: navigation.goBack }}/>
+        <TopNav.Screen name='Handguns' component={HGScreen} initialParams={{ showSelector: true, buildState: state, buildSetter: setter, returnFunc: navigation.goBack }}/>
+        <TopNav.Screen name='Launchers' component={LCScreen} initialParams={{ showSelector: true, buildState: state, buildSetter: setter, returnFunc: navigation.goBack }}/>
+        <TopNav.Screen name='Melee' component={MLScreen} initialParams={{ showSelector: true, buildState: state, buildSetter: setter, returnFunc: navigation.goBack }}/>
       </TopNav.Navigator>
     );
   } else {
@@ -120,7 +120,7 @@ export const PrimaryWeaponsScreen = ({ route }) => (
         accessoryLeft={() => <RenderBackAction />}
     />
     <NavigationContainer independent={true}>
-      <WeaponsTabNavigator type='primary' setter={route.params.setter}/>
+      <WeaponsTabNavigator type='primary' state={route.params.state} setter={route.params.setter}/>
     </NavigationContainer>
   </>
 );
@@ -133,7 +133,7 @@ export const SecondaryWeaponsScreen = ({ route }) => (
         accessoryLeft={() => <RenderBackAction />}
     />
     <NavigationContainer independent={true}>
-      <WeaponsTabNavigator type='secondary' setter={route.params.setter}/>
+      <WeaponsTabNavigator type='secondary' state={route.params.state} setter={route.params.setter}/>
     </NavigationContainer>
   </>
 );

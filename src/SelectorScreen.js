@@ -4,6 +4,8 @@ import { Text, Layout, useTheme, TopNavigation, TopNavigationAction, Icon, Radio
 import { useNavigation } from '@react-navigation/native';
 import Accordion from 'react-native-collapsible/Accordion';
 
+import { PERK1, PERK2, PERK3, LETHAL, TACTICAL } from './Equipment';
+
 const BackIcon = (props) => (
   <Icon {...props} name='arrow-back-outline'/>
 );
@@ -16,7 +18,7 @@ const RenderBackAction = () => {
   )
 };
 
-const BaseSelector = ({ items, setter, category }) => {
+const BaseSelector = ({ items, state, setter, category, assets }) => {
     const theme = useTheme();
     const navigation = useNavigation();
 
@@ -25,8 +27,8 @@ const BaseSelector = ({ items, setter, category }) => {
     const _renderHeader = section => {
         return (
             <View style={{ paddingBottom: '4%', paddingLeft: '4%', paddingRight: '4%', backgroundColor: theme['background-basic-color-2'], borderTopWidth: (section.first ? 0 : 4), borderColor: theme['background-basic-color-1'], flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Image source={section.image} resizeMode='contain' style={{ width: 48, height: 48 }}/>
-                    <Text style={{ fontWeight: 'bold' }}>{section.title}</Text>
+                    <Image source={assets[section.id].image} resizeMode='contain' style={{ width: 48, height: 48 }}/>
+                    <Text style={{ fontWeight: 'bold' }}>{assets[section.id].title}</Text>
                     <Radio></Radio>
             </View>
         );
@@ -38,9 +40,15 @@ const BaseSelector = ({ items, setter, category }) => {
             selectButton = <>
                 <Text />
                 <Text />
-                <Button onPress={() => {setter({subtitle: category, title: section.title, image: section.image}); navigation.goBack(); }}>SELECT</Button>
+                <Button onPress={() => {
+                    let tempState = state;
+                    tempState[category] = section.id;           
+                    setter(tempState); 
+                    navigation.goBack();
+                }}>SELECT</Button>
             </>;
         }
+
 
         return (
             <View style={{ padding: '4%', backgroundColor: theme['background-basic-color-1'] }}>
@@ -67,34 +75,28 @@ const BaseSelector = ({ items, setter, category }) => {
 
 const perk1List = [
     {
-        image: require('../assets/perks/double_time.png'),
         first: true,
-        title: 'Double Time',
+        id: 'DOUBLE',
         content: 'Double the duration of Tactical Sprint. Increase crouch movement speed by 30%.',
     },
     {
-        image: require('../assets/perks/kill_chain.png'),
-        title: 'Kill Chain',
+        id: 'KILL',
         content: 'Killstreak kills count towards your next killstreak. Only applies to killstreaks earned this life.',
     },
     {
-        image: require('../assets/perks/scavenger.png'),
-        title: 'Scavenger',
+        id: 'SCAVENGER',
         content: 'Resupply ammo from dead players.',
     },
     {
-        image: require('../assets/perks/eod.png'),
-        title: 'E.O.D.',
+        id: 'EOD',
         content: 'Take reduced damage from non-killstreak explosives and fire. Hack enemy Claymores, Proximity Mines, and C4.',
     },
     {
-        image: require('../assets/perks/cold_blooded.png'),
-        title: 'Cold-Blooded',
+        id: 'COLD',
         content: 'Undetectable by AI targeting systems and thermal optic. Does not trigger High Alert warning.',
     },
     {
-        image: require('../assets/perks/quick_fix.png'),
-        title: 'Quick Fix',
+        id: 'QUICK',
         content: 'Killing players immediately starts health regeneration. Capturing and holding objectives increases your health regeneration rate.',
     }
   ];
@@ -107,40 +109,34 @@ export const Perk1Screen = ({ route }) => (
         title='Perk 1'
         accessoryLeft={() => <RenderBackAction />}
     />
-    <BaseSelector items={perk1List} setter={route.params.setter} category='Perk 1'/>
+    <BaseSelector items={perk1List} state={route.params.state} setter={route.params.setter} category='perk1' assets={PERK1}/>
   </>
 );
 
 const perk2List = [
     {
-        image: require('../assets/perks/restock.png'),
         first: true,
-        title: 'Restock',
+        id: 'RESTOCK',
         content: 'Recharge equipment over 25 seconds.',
     },
     {
-        image: require('../assets/perks/hardline.png'),
-        title: 'Hardline',
+        id: 'HARDLINE',
         content: 'Your killstreaks cost one less kill.',
     },
     {
-        image: require('../assets/perks/high_alert.png'),
-        title: 'High Alert',
+        id: 'ALERT',
         content: 'Your vision pulses when enemies outside of your view see you.',
     },
     {
-        image: require('../assets/perks/ghost.png'),
-        title: 'Ghost',
+        id: 'GHOST',
         content: 'Undetectable by UAVs, Radar Drones, and Heartbeat Sensors.',
     },
     {
-        image: require('../assets/perks/pointsman.png'),
-        title: 'Pointman',
+        id: 'POINTMAN',
         content: 'Change your killstreaks into Scorestreaks.',
     },
     {
-        image: require('../assets/perks/overkill.png'),
-        title: 'Overkill',
+        id: 'OVERKILL',
         content: 'Carry two primary weapons.',
     }
   ];
@@ -152,40 +148,34 @@ export const Perk2Screen = ({ route }) => (
         title='Perk 2'
         accessoryLeft={() => <RenderBackAction />}
     />
-    <BaseSelector items={perk2List} setter={route.params.setter} category='Perk 2'/>
+    <BaseSelector items={perk2List} state={route.params.state} setter={route.params.setter} category='perk2' assets={PERK2}/>
   </>
 );
 
 const perk3List = [
     {
-        image: require('../assets/perks/tune_up.png'),
         first: true,
-        title: 'Tune Up',
+        id: 'TUNE',
         content: 'Increase the charge rate of field upgrades by 40%.',
     },
     {
-        image: require('../assets/perks/amped.png'),
-        title: 'Amped',
+        id: 'AMPED',
         content: 'Faster weapon swap and rocket launcher reload speed.',
     },
     {
-        image: require('../assets/perks/shrapnel.png'),
-        title: 'Shrapnel',
+        id: 'SHRAPNEL',
         content: 'Spawn with an extra piece of lethal equipment. Explosive damage delays enemy health regeneration.',
     },
     {
-        image: require('../assets/perks/battle.png'),
-        title: 'Battle Hardened',
+        id: 'BATTLE',
         content: 'Reduce strength of enemy flash, stun, EMP, and gas effects. Immune to Snapshot Grenades.',
     },
     {
-        image: require('../assets/perks/spotter.png'),
-        title: 'Spotter',
+        id: 'SPOTTER',
         content: 'See enemy equipment, field upgrades, and killstreaks through walls. Hack enemy Claymores, Proximity Mines, C4, and Trophy Systems.',
     },
     {
-        image: require('../assets/perks/tracker.png'),
-        title: 'Tracker',
+        id: 'TRACKER',
         content: 'Enemies leave behind a footprint trail. See markers at enemy death locations and hide the death markers of enemies you kill.',
     }
   ];
@@ -197,50 +187,42 @@ export const Perk3Screen = ({ route }) => (
         title='Perk 3'
         accessoryLeft={() => <RenderBackAction />}
     />
-    <BaseSelector items={perk3List} setter={route.params.setter} category='Perk 3'/>
+    <BaseSelector items={perk3List} state={route.params.state} setter={route.params.setter} category='perk3' assets={PERK3}/>
   </>
 );
 
 const lethalsList = [
     {
-        image: require('../assets/lethals/frag.png'),
         first: true,
-        title: 'Frag Grenade',
+        id: 'FRAG',
         content: 'Cookable fragmentation grenade.',
     },
     {
-        image: require('../assets/lethals/semtex.png'),
-        title: 'Semtax',
+        id: 'SEMTEX',
         content: 'Timed sticky grenade.',
     },
     {
-        image: require('../assets/lethals/molotov.png'),
-        title: 'Molotov Cocktail',
+        id: 'MOLOTOV',
         content: 'Improvised incendiary device that explodes on impact.',
     },
     {
-        image: require('../assets/lethals/knife.png'),
-        title: 'Throwing Knife',
+        id: 'KNIFE',
         content: 'Retrievable knife that is lethal on impact.',
     },
     {
-        image: require('../assets/lethals/claymore.png'),
-        title: 'Claymore',
+        id: 'CLAYMORE',
         content: 'Proximity-activated explosive mine.',
     },
     {
-        image: require('../assets/lethals/mine.png'),
-        title: 'Proximity Mine',
+        id: 'MINE',
         content: 'Pressure-triggered explosive that deals heavy damage to vehicles.',
     },
     {
-        image: require('../assets/lethals/c4.png'),
-        title: 'C4',
+        id: 'C4',
         content: 'Large explosive that sticks to surfaces and can be detonated remotely with click (pressing lethal command again).',
     },
     {
-        image: require('../assets/lethals/thermite.png'),
-        title: 'Thermite',
+        id: 'THERMITE',
         content: 'Burns fiercely for a short while after impact. Sticks to all surface.',
     }
   ];
@@ -252,50 +234,42 @@ export const LethalScreen = ({ route }) => (
         title='Lethal'
         accessoryLeft={() => <RenderBackAction />}
     />
-    <BaseSelector items={lethalsList} setter={route.params.setter} category='Lethal'/>
+    <BaseSelector items={lethalsList} state={route.params.state} setter={route.params.setter} category='lethal' assets={LETHAL}/>
   </>
 );
 
 const tacticalsList = [
     {
-        image: require('../assets/tacticals/stun.png'),
         first: true,
-        title: 'Stun Grenade',
+        id: 'STUN',
         content: 'Slows victim\'s movement and aiming.',
     },
     {
-        image: require('../assets/tacticals/smoke.png'),
-        title: 'Smoke Grenade',
+        id: 'SMOKE',
         content: 'Deploys a smoke screen that blocks vision and automated targeting systems.',
     },
     {
-        image: require('../assets/tacticals/flash.png'),
-        title: 'Flash Grenade',
+        id: 'FLASH',
         content: 'Blinds and deafens targets.',
     },
     {
-        image: require('../assets/tacticals/stim.png'),
-        title: 'Stim',
+        id: 'STIM',
         content: 'Military stimulant that cauterizes combat wounds and refreshes Tactical Sprint.',
     },
     {
-        image: require('../assets/tacticals/decoy.png'),
-        title: 'Decoy Grenade',
+        id: 'DECOY',
         content: 'Counter-intel grenade that simulates fake gunfire and radar signatures that confuse the enemy.',
     },
     {
-        image: require('../assets/tacticals/gas.png'),
-        title: 'Gas Grenade',
+        id: 'GAS',
         content: 'Explodes on impact with the ground, releasing a lingering cloud of tear gas that causes slowed movement, blurred vision, and coughing.',
     },
     {
-        image: require('../assets/tacticals/snapshot.png'),
-        title: 'Snapshot Grenade',
+        id: 'SNAPSHOT',
         content: 'Provides a momentary glimpse of enemies within the blast radius.',
     },
     {
-        image: require('../assets/tacticals/heartbeat.png'),
-        title: 'Heartbeat Sensor',
+        id: 'HEARTBEAT',
         content: 'A tablet that displays rough information about nearby enemies.',
     }
   ];
@@ -307,6 +281,6 @@ export const TacticalScreen = ({ route }) => (
         title='Tactical'
         accessoryLeft={() => <RenderBackAction />}
     />
-    <BaseSelector items={tacticalsList} setter={route.params.setter} category='Tactical'/>
+    <BaseSelector items={tacticalsList} state={route.params.state} setter={route.params.setter} category='tactical' assets={TACTICAL}/>
   </>
 );

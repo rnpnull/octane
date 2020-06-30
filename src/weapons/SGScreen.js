@@ -4,13 +4,14 @@ import { Button, Text, useTheme, Layout } from '@ui-kitten/components';
 import Accordion from 'react-native-collapsible/Accordion';
 import ProgressBar from 'react-native-progress/Bar';
 
+import { PRIMARY } from '../Equipment';
+
 export default ({ route }) => {
     const theme = useTheme();
     const SECTIONS = [
       {
-        image: require('../../assets/sg/model680.png'),
         first: true,
-        title: 'Model 680',
+        id: 'M680',
         subtitle: 'Shotgun Alpha',
         content: 'A reliable, well-rounded 12 gauge pump-action shotgun.',
         accuracy: '60',
@@ -21,8 +22,7 @@ export default ({ route }) => {
         control: '65'
       },
       {
-        image: require('../../assets/sg/r9.png'),
-        title: 'R9-0 Shotgun',
+        id: 'R90',
         subtitle: 'Shotgun Bravo',
         content: 'Double barrels provide two rapid shots before each re-chamber.  ',
         accuracy: '55',
@@ -33,8 +33,7 @@ export default ({ route }) => {
         control: '75'
       },
       {
-        image: require('../../assets/sg/725.png'),
-        title: '725',
+        id: 'SG725',
         subtitle: 'Shotgun Charlie',
         content: 'Break action shotgun with 2 round capacity.  A long back-bored barrel and cylindrical choke keeps spread tight and lethal over extended ranges.',
         accuracy: '70',
@@ -45,8 +44,7 @@ export default ({ route }) => {
         control: '60'
       },
       {
-        image: require('../../assets/sg/origin12.png'),
-        title: 'Origin 12 Shotgun',
+        id: 'ORIGIN',
         subtitle: 'Shotgun Delta',
         content: 'A semi-automatic shotgun with a large ammo capacity allows for continuous firing.  Effective at close range.',
         accuracy: '50',
@@ -57,8 +55,7 @@ export default ({ route }) => {
         control: '70'
       },
       {
-        image: require('../../assets/sg/vlk.png'),
-        title: 'VLK Rogue',
+        id: 'VLK',
         subtitle: 'Shotgun Echo',
         content: 'An agile 12-gauge mag fed shotgun from VLK with extensive options to modify range, stability, and maneuverability.',
         accuracy: '57',
@@ -77,9 +74,9 @@ export default ({ route }) => {
         <View style={{ paddingLeft: '4%', paddingRight: '4%', backgroundColor: theme['background-basic-color-2'], borderTopWidth: (section.first ? 0 : 4), borderColor: theme['background-basic-color-1'], flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <View style={{ flex: 0.6 }}>
             <Text style={{ color: theme['text-hint-color'], fontSize: 14 }}>{section.subtitle}</Text>
-            <Text category='h6'>{section.title}</Text>
+            <Text category='h6'>{PRIMARY[section.id].title}</Text>
           </View>
-          <Image source={section.image} resizeMode='contain' style={{ flex: 0.4, height: 100 }}/>
+          <Image source={PRIMARY[section.id].image} resizeMode='contain' style={{ flex: 0.4, height: 100 }}/>
         </View>
       );
     };
@@ -90,7 +87,12 @@ export default ({ route }) => {
         selectButton = <>
           <Text />
           <Text />
-          <Button onPress={() => {route.params.buildSetter({subtitle: section.subtitle, title: section.title, image: section.image}); route.params.returnFunc(); }}>SELECT</Button>
+          <Button onPress={() => {
+            let tempState = route.params.buildState;
+            tempState.primary = section.id;           
+            route.params.buildSetter(tempState); 
+            route.params.returnFunc();
+          }}>SELECT</Button>
         </>;
       }
 

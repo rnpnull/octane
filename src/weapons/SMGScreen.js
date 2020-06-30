@@ -4,13 +4,14 @@ import { Button, Text, useTheme, Layout } from '@ui-kitten/components';
 import Accordion from 'react-native-collapsible/Accordion';
 import ProgressBar from 'react-native-progress/Bar';
 
+import { PRIMARY } from '../Equipment';
+
 export default ({ route }) => {
     const theme = useTheme();
     const SECTIONS = [
       {
-        image: require('../../assets/smg/aug.png'),
         first: true,
-        title: 'AUG',
+        id: 'AUG',
         subtitle: 'Submachine Gun Alpha',
         content: 'A modular, fully automatic weapon configured for mobility and close range combat.',
         accuracy: '65',
@@ -21,8 +22,7 @@ export default ({ route }) => {
         control: '70'
       },
       {
-        image: require('../../assets/smg/p90.png'),
-        title: 'P90',
+        id: 'P90',
         subtitle: 'Submachine Gun Bravo',
         content: 'An automatic bullpup submachine gun. The unique top mounted magazine hold carries ample high velocity 5.7 x 28mm ammunition.',
         accuracy: '52',
@@ -33,8 +33,7 @@ export default ({ route }) => {
         control: '72'
       },
       {
-        image: require('../../assets/smg/mp5.png'),
-        title: 'MP5',
+        id: 'MP5',
         subtitle: 'Submachine Gun Charlie',
         content: 'A fully automatic 9mm submachine gun.  A perfect balance of stability, mobility, and lethality.',
         accuracy: '63',
@@ -45,9 +44,7 @@ export default ({ route }) => {
         control: '75'
       },
       {
-  
-        image: require('../../assets/smg/uzi.png'),
-        title: 'Uzi',
+        id: 'UZI',
         subtitle: 'Submachine Gun Delta',
         content: 'A fully automatic open bolt submachine gun.  Simple, steady, effective.',
         accuracy: '56',
@@ -58,8 +55,7 @@ export default ({ route }) => {
         control: '72'
       },
       {
-        image: require('../../assets/smg/pp19.png'),
-        title: 'PP19 Bizon',
+        id: 'BIZON',
         subtitle: 'Submachine Gun Echo',
         content: 'Well-balanced automatic submachine gun with a high capacity helical magazine.',
         accuracy: '61',
@@ -70,8 +66,7 @@ export default ({ route }) => {
         control: '73'
       },
       {
-        image: require('../../assets/smg/mp7.png'),
-        title: 'MP7',
+        id: 'MP7',
         subtitle: 'Submachine Gun Foxtrot',
         content: 'Compact by design, this fully automatic weapon has a high rate of fire and low recoil.',
         accuracy: '60',
@@ -82,8 +77,7 @@ export default ({ route }) => {
         control: '74'
       },
       {
-        image: require('../../assets/smg/striker.png'),
-        title: 'Striker 45',
+        id: 'STRIKER',
         subtitle: 'Submachine Gun Golf',
         content: 'A hard hitting submachine gun chambered in .45 Auto that will shred at longer distances than other weapons in its class.  Moderate rate of fire keeps the gun in control while fully automatic.',
         accuracy: '66',
@@ -94,8 +88,7 @@ export default ({ route }) => {
         control: '70'
       },
       {
-        image: require('../../assets/smg/fennec.png'),
-        title: 'Fennec',
+        id: 'FENNEC',
         subtitle: 'Submachine Gun Hotel',
         content: 'An aggressive full auto sub machine gun with buttery smooth recoil and a blazing fast rate of fire that is exceptional for strategic room clearing and holding down the front line.',
         accuracy: '69',
@@ -114,9 +107,9 @@ export default ({ route }) => {
         <View style={{ paddingLeft: '4%', paddingRight: '4%', backgroundColor: theme['background-basic-color-2'], borderTopWidth: (section.first ? 0 : 4), borderColor: theme['background-basic-color-1'], flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <View style={{ flex: 0.6 }}>
             <Text style={{ color: theme['text-hint-color'], fontSize: 14 }}>{section.subtitle}</Text>
-            <Text category='h6'>{section.title}</Text>
+            <Text category='h6'>{PRIMARY[section.id].title}</Text>
           </View>
-          <Image source={section.image} resizeMode='contain' style={{ flex: 0.4, height: 100 }}/>
+          <Image source={PRIMARY[section.id].image} resizeMode='contain' style={{ flex: 0.4, height: 100 }}/>
         </View>
       );
     };
@@ -127,7 +120,12 @@ export default ({ route }) => {
         selectButton = <>
           <Text />
           <Text />
-          <Button onPress={() => {route.params.buildSetter({subtitle: section.subtitle, title: section.title, image: section.image}); route.params.returnFunc(); }}>SELECT</Button>
+          <Button onPress={() => {
+            let tempState = route.params.buildState;
+            tempState.primary = section.id;           
+            route.params.buildSetter(tempState); 
+            route.params.returnFunc();
+          }}>SELECT</Button>
         </>;
       }
 

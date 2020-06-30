@@ -4,13 +4,14 @@ import { Button, Text, useTheme, Layout } from '@ui-kitten/components';
 import Accordion from 'react-native-collapsible/Accordion';
 import ProgressBar from 'react-native-progress/Bar';
 
+import { PRIMARY } from '../Equipment';
+
 export default ({ route }) => {
     const theme = useTheme();
     const SECTIONS = [
       {
-        image: require('../../assets/mr/ebr14.png'),
         first: true,
-        title: 'EBR-14',
+        id: 'EBR',
         subtitle: 'Marksman Rifle Alpha',
         content: 'A semi-automatic long range marksman rifle balances rate of fire with lethality.',
         accuracy: '77',
@@ -21,8 +22,7 @@ export default ({ route }) => {
         control: '72'
       },
       {
-        image: require('../../assets/mr/mk2.png'),
-        title: 'MK2 Carbine',
+        id: 'MK2',
         subtitle: 'Marksman Rifle Bravo',
         content: 'Highly accurate lever action rifle.  Will neutralize an enemy with one well placed round to the head or chest.',
         accuracy: '78',
@@ -33,8 +33,7 @@ export default ({ route }) => {
         control: '60'
       },
       {
-        image: require('../../assets/mr/kar.png'),
-        title: 'Kar98k',
+        id: 'KAR',
         subtitle: 'Marksman Rifle Charlie',
         content: 'Bolt action rifle chambered in 7.92 Mauser.  A WW2 relic that is still extremely lethal in the hands of a rebel marksman.',
         accuracy: '76',
@@ -45,8 +44,7 @@ export default ({ route }) => {
         control: '68'
       },
       {
-        image: require('../../assets/mr/crossbow.png'),
-        title: 'Crossbow',
+        id: 'XBOW',
         subtitle: 'Marksman Rifle Delta',
         content: 'Silent and agile, this high-performance crossbow fires 20.0" bolts with exceptional lethality.  Exclusive customization, distinct functionality, and unique ammunition types put this weapon in a class of its own.  Standard 20.0" bolts are recoverable, and are undetectable by trophy systems.',
         accuracy: '70',
@@ -57,8 +55,7 @@ export default ({ route }) => {
         control: '64'
       },
       {
-        image: require('../../assets/mr/sks.png'),
-        title: 'SKS',
+        id: 'SKS',
         subtitle: 'Marksman Rifle Echo',
         content: 'Lightweight, semi-auto Carbine chambered in 7.62x39mm.  This hard hitting and agile Soviet rifle focuses on utility over accuracy.  It flaunts a faster fire rate than other weapons in its class, but a carefully placed round will eliminate the need for follow up shots entirely.  This classic DMR has seen a lot of battles, and its unique gunsmith configurations reflect a diverse service history.',
         accuracy: '75',
@@ -77,9 +74,9 @@ export default ({ route }) => {
         <View style={{ paddingLeft: '4%', paddingRight: '4%', backgroundColor: theme['background-basic-color-2'], borderTopWidth: (section.first ? 0 : 4), borderColor: theme['background-basic-color-1'], flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <View style={{ flex: 0.6 }}>
             <Text style={{ color: theme['text-hint-color'], fontSize: 14 }}>{section.subtitle}</Text>
-            <Text category='h6'>{section.title}</Text>
+            <Text category='h6'>{PRIMARY[section.id].title}</Text>
           </View>
-          <Image source={section.image} resizeMode='contain' style={{ flex: 0.4, height: 100 }}/>
+          <Image source={PRIMARY[section.id].image} resizeMode='contain' style={{ flex: 0.4, height: 100 }}/>
         </View>
       );
     };
@@ -90,7 +87,12 @@ export default ({ route }) => {
         selectButton = <>
           <Text />
           <Text />
-          <Button onPress={() => {route.params.buildSetter({subtitle: section.subtitle, title: section.title, image: section.image}); route.params.returnFunc(); }}>SELECT</Button>
+          <Button onPress={() => {
+            let tempState = route.params.buildState;
+            tempState.primary = section.id;           
+            route.params.buildSetter(tempState); 
+            route.params.returnFunc();
+          }}>SELECT</Button>
         </>;
       }
 

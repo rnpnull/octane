@@ -7,6 +7,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import { PrimaryWeaponsScreen, SecondaryWeaponsScreen } from './WeaponsScreen';
 import { Perk1Screen, Perk2Screen, Perk3Screen, LethalScreen, TacticalScreen } from './SelectorScreen';
+import { PRIMARY, SECONDARY, PERK1, PERK2, PERK3, LETHAL, TACTICAL } from './Equipment';
 
 const TopNav = createMaterialTopTabNavigator();
 const StackNav = createStackNavigator();
@@ -47,10 +48,6 @@ const BuilderScreen = ({ navigation }) => {
       <Text category='h1' style={{textAlign:'center'}}>BUILD A LOADOUT</Text>
       <Text/>
       <Button onPress={() => { navigation.push('Builder'); }}>DO IT NOW</Button>
-      <Text/>
-      <Button onPress={() => { navigation.push('Primary'); }}>DEBUG PRIMARY</Button>
-      <Text/>
-      <Button onPress={() => { navigation.push('Secondary'); }}>DEBUG SECONDARY</Button>
     </Layout>
   );
 }
@@ -83,86 +80,86 @@ const LoadoutTabNavigator = () => {
 }
 
 const AssemblyScreen = ({ navigation }) => {
-  const [ primaryState, setPrimaryState ] = useState({subtitle: 'Primary Weapon', title: 'Select', image: require('../assets/ar/fal.png')});
-  const [ secondaryState, setSecondaryState ] = useState({subtitle: 'Secondary Weapon', title: 'Select', image: require('../assets/hg/1911.png')});
-  const [ perk1State, setPerk1State ] = useState({subtitle: 'Perk 1', title: 'Select', image: require('../assets/perks/double_time.png')});
-  const [ perk2State, setPerk2State ] = useState({subtitle: 'Perk 2', title: 'Select', image: require('../assets/perks/overkill.png')});
-  const [ perk3State, setPerk3State ] = useState({subtitle: 'Perk 3', title: 'Select', image: require('../assets/perks/amped.png')});
-  const [ lethalState, setLethalState ] = useState({subtitle: 'Lethal', title: 'Select', image: require('../assets/lethals/frag.png')});
-  const [ tacticalState, setTacticalState ] = useState({subtitle: 'Tactical', title: 'Select', image: require('../assets/tacticals/stim.png')});
+  const [ loadoutState, setLoadoutState ] = useState({ primary: 'AMAX', secondary: 'RENETTI', perk1: 'DOUBLE', perk2: 'OVERKILL', perk3: 'AMPED', lethal: 'FRAG', tactical: 'STIM' });
   const theme = useTheme();
+
+  const updateState = ( data ) => {
+    setLoadoutState(JSON.parse(JSON.stringify(data)));
+    console.log(loadoutState);
+  }
 
   return (
     <>
       <TopNavigation
         alignment='center'
-        title='Loadout Builder'
+        title='XxQuickscope360xX'
         accessoryLeft={() => <RenderBackAction/>}
       />
       <ScrollView style={{ backgroundColor: theme['background-basic-color-1'] }}>
         <Layout style={{ flex: 1, alignItems: 'center' }}>
-          <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Primary', { setter: setPrimaryState } ); }}>
-            <Text style={{ color: theme['text-hint-color'], fontSize: 14 }}>{primaryState.subtitle}</Text>
-            <Text category='h6'>{primaryState.title}</Text>
-            <Image source={primaryState.image} resizeMode='contain' style={{ width: 256, height: 128, alignSelf: 'center' }}/>
+          <Text/>
+          <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Primary', { state: loadoutState, setter: updateState } ); }}>
+            <Text style={{ color: theme['text-hint-color'], fontSize: 14 }}>Primary Weapon</Text>
+            <Text category='h6'>{PRIMARY[loadoutState.primary].title}</Text>
+            <Image source={PRIMARY[loadoutState.primary].image} resizeMode='contain' style={{ width: 256, height: 128, alignSelf: 'center' }}/>
           </Card>
           <Text/>
-          <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Secondary', { setter: setSecondaryState } ); }}>
-            <Text style={{ color: theme['text-hint-color'], fontSize: 14 }}>{secondaryState.subtitle}</Text>
-            <Text category='h6'>{secondaryState.title}</Text>
-            <Image source={secondaryState.image} resizeMode='contain' style={{ width: 256, height: 128, alignSelf: 'center' }}/>
+          <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Secondary', { state: loadoutState, setter: updateState } ); }}>
+            <Text style={{ color: theme['text-hint-color'], fontSize: 14 }}>Secondary Weapon</Text>
+            <Text category='h6'>{SECONDARY[loadoutState.secondary].title}</Text>
+            <Image source={SECONDARY[loadoutState.secondary].image} resizeMode='contain' style={{ width: 256, height: 128, alignSelf: 'center' }}/>
           </Card>
           <Text/>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '95%' }}>
-            <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '30%', alignContent: 'center' }} onPress={() => { navigation.push('Perk1', { setter: setPerk1State } ); }}>
-              <Text style={{ color: theme['text-hint-color'], fontSize: 14, textAlign: 'center' }}>{perk1State.subtitle}</Text>
-              <Text style={{ fontWeight: 'bold', fontSize: 14, textAlign: 'center' }}>{perk1State.title}</Text>
-              <Image source={perk1State.image} resizeMode='contain' style={{ width: 64, height: 64, alignSelf: 'center' }}/>
-            </Card>
-            <Text/>
-            <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '30%' }} onPress={() => { navigation.push('Perk2', { setter: setPerk2State } ); }}>
-              <Text style={{ color: theme['text-hint-color'], fontSize: 14, textAlign: 'center'  }}>{perk2State.subtitle}</Text>
-              <Text style={{ fontWeight: 'bold', fontSize: 14, textAlign: 'center' }}>{perk2State.title}</Text>
-              <Image source={perk2State.image} resizeMode='contain' style={{ width: 64, height: 64, alignSelf: 'center' }}/>
-            </Card>
-            <Text/>
-            <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '30%' }} onPress={() => { navigation.push('Perk3', { setter: setPerk3State } ); }}>
-              <Text style={{ color: theme['text-hint-color'], fontSize: 14, textAlign: 'center'  }}>{perk3State.subtitle}</Text>
-              <Text style={{ fontWeight: 'bold', fontSize: 14, textAlign: 'center' }}>{perk3State.title}</Text>
-              <Image source={perk3State.image} resizeMode='contain' style={{ width: 64, height: 64, alignSelf: 'center' }}/>
-            </Card>
-          </View>
-          <Text/>
-          <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Lethal', { setter: setLethalState } ); }}>
-            <Text style={{ color: theme['text-hint-color'], fontSize: 14 }}>{lethalState.subtitle}</Text>
-            <Text category='h6'>{lethalState.title}</Text>
-            <Image source={lethalState.image} resizeMode='contain' style={{ width: 256, height: 128, alignSelf: 'center' }}/>
+          <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Perk1', { state: loadoutState, setter: updateState } ); }}>
+            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}> 
+              <Image source={PERK1[loadoutState.perk1].image} resizeMode='contain' style={{ width: 64, height: 64, alignSelf: 'center' }}/>
+              <View style={{ flex: .8 }}>
+                <Text style={{ color: theme['text-hint-color'], fontSize: 14, textAlign: 'right' }}>Perk 1</Text>
+                <Text category='h6' style={{ textAlign: 'right' }}>{PERK1[loadoutState.perk1].title}</Text>
+              </View>
+            </View>
           </Card>
           <Text/>
-          <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Tactical', { setter: setTacticalState } ); }}>
-            <Text style={{ color: theme['text-hint-color'], fontSize: 14 }}>{tacticalState.subtitle}</Text>
-            <Text category='h6'>{tacticalState.title}</Text>
-            <Image source={tacticalState.image} resizeMode='contain' style={{ width: 256, height: 128, alignSelf: 'center' }}/>
+          <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Perk2', { state: loadoutState, setter: updateState } ); }}>
+            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}> 
+              <Image source={PERK2[loadoutState.perk2].image} resizeMode='contain' style={{ width: 64, height: 64, alignSelf: 'center' }}/>
+              <View style={{ flex: .8 }}>
+                <Text style={{ color: theme['text-hint-color'], fontSize: 14, textAlign: 'right' }}>Perk 2</Text>
+                <Text category='h6' style={{ textAlign: 'right' }}>{PERK2[loadoutState.perk2].title}</Text>
+              </View>
+            </View>
           </Card>
           <Text/>
-          <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Perk1'); }}>
-            <Text category='h6' style={{ textAlign: 'center' }}>Test Perk Selector</Text>
-            <Image source={require('../assets/perks/eod.png')} resizeMode='contain' style={{ width: 128, height: 128, alignSelf: 'center' }}/>
+          <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Perk3', { state: loadoutState, setter: updateState } ); }}>
+            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}> 
+              <Image source={PERK3[loadoutState.perk3].image} resizeMode='contain' style={{ width: 64, height: 64, alignSelf: 'center' }}/>
+              <View style={{ flex: .8 }}>
+                <Text style={{ color: theme['text-hint-color'], fontSize: 14, textAlign: 'right' }}>Perk 3</Text>
+                <Text category='h6' style={{ textAlign: 'right' }}>{PERK3[loadoutState.perk3].title}</Text>
+              </View>
+            </View>
           </Card>
           <Text/>
-          <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Lethal'); }}>
-            <Text category='h6' style={{ textAlign: 'center' }}>Test Lethal Selector</Text>
-            <Image source={require('../assets/lethals/frag.png')} resizeMode='contain' style={{ width: 128, height: 128, alignSelf: 'center' }}/>
+          <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Lethal', { state: loadoutState, setter: updateState } ); }}>
+            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}> 
+              <View style={{ flex: .8 }}>
+                <Text style={{ color: theme['text-hint-color'], fontSize: 14 }}>Lethal</Text>
+                <Text category='h6'>{LETHAL[loadoutState.lethal].title}</Text>
+              </View>
+              <Image source={LETHAL[loadoutState.lethal].image} resizeMode='contain' style={{ width: 64, height: 64, alignSelf: 'center' }}/>
+            </View>
           </Card>
           <Text/>
-          <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Tactical'); }}>
-            <Text category='h6' style={{ textAlign: 'center' }}>Test Tactical Selector</Text>
-            <Image source={require('../assets/tacticals/stim.png')} resizeMode='contain' style={{ width: 128, height: 128, alignSelf: 'center' }}/>
+          <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Tactical', { state: loadoutState, setter: updateState } ); }}>
+            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}> 
+              <View style={{ flex: .8 }}>
+                <Text style={{ color: theme['text-hint-color'], fontSize: 14 }}>Tactical</Text>
+                <Text category='h6'>{TACTICAL[loadoutState.tactical].title}</Text>
+              </View>
+              <Image source={TACTICAL[loadoutState.tactical].image} resizeMode='contain' style={{ width: 64, height: 64, alignSelf: 'center' }}/>
+            </View>
           </Card>
           <Text/>
-          <Text category='h1' style={{textAlign:'center'}}>WHERE'S YOUR DATA?</Text>
-          <Text/>
-          <Button onPress={() => { navigation.push('Attachment', { setter: setPrimaryState } ); }}>GET THE EXTENDO</Button>
         </Layout>
       </ScrollView>
     </>

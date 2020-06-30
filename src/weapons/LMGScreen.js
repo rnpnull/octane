@@ -4,13 +4,14 @@ import { Button, Text, useTheme, Layout } from '@ui-kitten/components';
 import Accordion from 'react-native-collapsible/Accordion';
 import ProgressBar from 'react-native-progress/Bar';
 
+import { PRIMARY } from '../Equipment';
+
 export default ({ route }) => {
     const theme = useTheme();
     const SECTIONS = [
       {
-        image: require('../../assets/lmg/pkm.png'),
         first: true,
-        title: 'PKM',
+        id: 'PKM',
         subtitle: 'Light Machine Gun Alpha',
         content: 'A fully automatic light machine gun firing 7.62mm ammunition for high damage at a moderate fire rate.',
         accuracy: '75',
@@ -21,8 +22,7 @@ export default ({ route }) => {
         control: '65'
       },
       {
-        image: require('../../assets/lmg/sa87.png'),
-        title: 'SA87',
+        id: 'SA87',
         subtitle: 'Light Machine Gun Bravo',
         content: 'A fully automatic bullpup light machine gun.  Lower rate of fire and 5.56mm ammunition keep this rifle stable and effective at long ranges.',
         accuracy: '73',
@@ -33,8 +33,7 @@ export default ({ route }) => {
         control: '70'
       },
       {
-        image: require('../../assets/lmg/m91.png'),
-        title: 'M91',
+        id: 'M91',
         subtitle: 'Light Machine Gun Charlie',
         content: 'Robust light machine gun sacrifices mobility for stability.  High caliber sustained fire will neutralize targets at long ranges.',
         accuracy: '74',
@@ -45,8 +44,7 @@ export default ({ route }) => {
         control: '65'
       },
       {
-        image: require('../../assets/lmg/mg34.png'),
-        title: 'MG34',
+        id: 'MG34',
         subtitle: 'Light Machine Gun Delta',
         content: 'Fully automatic weapon with a high rate of fire and punishing 7.92 Mauser ammunition.  Salvaged WW2 machine guns are still reliable and deadly on the battlefield.',
         accuracy: '72',
@@ -57,8 +55,7 @@ export default ({ route }) => {
         control: '72'
       },
       {
-        image: require('../../assets/lmg/holger.png'),
-        title: 'Holger-26',
+        id: 'HOLGER',
         subtitle: 'Light Machine Gun Echo',
         content: 'A versatile fully automatic 5.56mm light machine gun.  Modular design can be configured for a broad range of engagements.',
         accuracy: '73',
@@ -69,8 +66,7 @@ export default ({ route }) => {
         control: '72'
       },
       {
-        image: require('../../assets/lmg/bruen.png'),
-        title: 'Bruen Mk9',
+        id: 'BRUEN',
         subtitle: 'Light Machine Gun Foxtrot',
         content: 'This air-cooled open bolt 5.56 light machine gun features a competitive rate of fire and excellent stability that will dominate the mid to long range battlefield.',
         accuracy: '78',
@@ -89,9 +85,9 @@ export default ({ route }) => {
         <View style={{ paddingLeft: '4%', paddingRight: '4%', backgroundColor: theme['background-basic-color-2'], borderTopWidth: (section.first ? 0 : 4), borderColor: theme['background-basic-color-1'], flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <View style={{ flex: 0.6 }}>
             <Text style={{ color: theme['text-hint-color'], fontSize: 14 }}>{section.subtitle}</Text>
-            <Text category='h6'>{section.title}</Text>
+            <Text category='h6'>{PRIMARY[section.id].title}</Text>
           </View>
-          <Image source={section.image} resizeMode='contain' style={{ flex: 0.4, height: 100 }}/>
+          <Image source={PRIMARY[section.id].image} resizeMode='contain' style={{ flex: 0.4, height: 100 }}/>
         </View>
       );
     };
@@ -102,7 +98,12 @@ export default ({ route }) => {
         selectButton = <>
           <Text />
           <Text />
-          <Button onPress={() => {route.params.buildSetter({subtitle: section.subtitle, title: section.title, image: section.image}); route.params.returnFunc(); }}>SELECT</Button>
+          <Button onPress={() => {
+            let tempState = route.params.buildState;
+            tempState.primary = section.id;           
+            route.params.buildSetter(tempState); 
+            route.params.returnFunc();
+          }}>SELECT</Button>
         </>;
       }
 

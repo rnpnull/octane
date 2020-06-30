@@ -4,13 +4,14 @@ import { Button, Text, useTheme, Layout } from '@ui-kitten/components';
 import Accordion from 'react-native-collapsible/Accordion';
 import ProgressBar from 'react-native-progress/Bar';
 
+import { SECONDARY } from '../Equipment';
+
 export default ({ route }) => {
   const theme = useTheme();
   const SECTIONS = [
     {
       first: true,
-      image: require('../../assets/ml/combat_knife.png'),
-      title: 'Combat Knife',
+      id: 'KNIFE',
       subtitle: 'Melee Alpha',
       content: 'A CQC tactical knife.  Standard military issue, employed for fast, quiet, and deadly wetwork.',
       accuracy: '0',
@@ -21,8 +22,7 @@ export default ({ route }) => {
       control: '30'
     },
     {
-      image: require('../../assets/ml/riot_shield.png'),
-      title: 'Riot Shield',
+      id: 'RIOT',
       subtitle: 'Melee Beta',
       content: 'Ballistic-proof and explosive-resistant shield with increased melee damage.',
       accuracy: '0',
@@ -33,8 +33,7 @@ export default ({ route }) => {
       control: '0'
     },
     {
-      image: require('../../assets/ml/kali_stick.png'),
-      title: 'Kali Sticks',
+      id: 'KALI',
       subtitle: 'Melee Charlie',
       content: 'Dual wielding batons allow operators to approach their targets with great agility.  Sturdy, lightweight design enables rapid attacks for zoning your enemies.',
       accuracy: '0',
@@ -53,9 +52,9 @@ export default ({ route }) => {
       <View style={{ paddingLeft: '4%', paddingRight: '4%', backgroundColor: theme['background-basic-color-2'], borderTopWidth: (section.first ? 0 : 4), borderColor: theme['background-basic-color-1'], flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <View style={{ flex: 0.6 }}>
           <Text style={{ color: theme['text-hint-color'], fontSize: 14 }}>{section.subtitle}</Text>
-          <Text category='h6'>{section.title}</Text>
+          <Text category='h6'>{SECONDARY[section.id].title}</Text>
         </View>
-        <Image source={section.image} resizeMode='contain' style={{ flex: 0.4, height: 100 }}/>
+        <Image source={SECONDARY[section.id].image} resizeMode='contain' style={{ flex: 0.4, height: 100 }}/>
       </View>
     );
   };
@@ -66,7 +65,12 @@ export default ({ route }) => {
       selectButton = <>
         <Text />
         <Text />
-        <Button onPress={() => {route.params.buildSetter({subtitle: section.subtitle, title: section.title, image: section.image}); route.params.returnFunc(); }}>SELECT</Button>
+        <Button onPress={() => {
+          let tempState = route.params.buildState;
+          tempState.secondary = section.id;           
+          route.params.buildSetter(tempState); 
+          route.params.returnFunc();
+        }}>SELECT</Button>
       </>;
     }
 

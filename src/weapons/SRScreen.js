@@ -4,13 +4,14 @@ import { Button, Text, useTheme, Layout } from '@ui-kitten/components';
 import Accordion from 'react-native-collapsible/Accordion';
 import ProgressBar from 'react-native-progress/Bar';
 
+import { PRIMARY } from '../Equipment';
+
 export default ({ route }) => {
     const theme = useTheme();
     const SECTIONS = [
       {
-        image: require('../../assets/sr/dragunov.png'),
         first: true,
-        title: 'Dragunov',
+        id: 'DRAGUNOV',
         subtitle: 'Sniper Rifle Alpha',
         content: 'A soviet workhorse chambered in 7.62mm x 54mmR.  This gas-operated, semi-automatic sniper rifle allows for rapid follow-up shots.',
         accuracy: '81',
@@ -21,8 +22,7 @@ export default ({ route }) => {
         control: '65'
       },
       {
-        image: require('../../assets/sr/hdr.png'),
-        title: 'HDR',
+        id: 'HDR',
         subtitle: 'Sniper Rifle Bravo',
         content: 'An anti-material bolt action sniper rifle chambered in 12.7x108mm ammunition.  745 gr bullets have a lower muzzle velocity, but are devastating at very long ranges.',
         accuracy: '83',
@@ -33,8 +33,7 @@ export default ({ route }) => {
         control: '65'
       },
       {
-        image: require('../../assets/sr/ax50.png'),
-        title: 'AX-50',
+        id: 'AX50',
         subtitle: 'Sniper Rifle Charlie',
         content: 'Hard hitting, bolt action sniper rifle with .50 cal BMG ammunition.  Its tungsten sabot tipped bullets are fast and powerful, but require precise shots over long distances.',
         accuracy: '82',
@@ -53,9 +52,9 @@ export default ({ route }) => {
         <View style={{ paddingLeft: '4%', paddingRight: '4%', backgroundColor: theme['background-basic-color-2'], borderTopWidth: (section.first ? 0 : 4), borderColor: theme['background-basic-color-1'], flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <View style={{ flex: 0.6 }}>
             <Text style={{ color: theme['text-hint-color'], fontSize: 14 }}>{section.subtitle}</Text>
-            <Text category='h6'>{section.title}</Text>
+            <Text category='h6'>{PRIMARY[section.id].title}</Text>
           </View>
-          <Image source={section.image} resizeMode='contain' style={{ flex: 0.4, height: 100 }}/>
+          <Image source={PRIMARY[section.id].image} resizeMode='contain' style={{ flex: 0.4, height: 100 }}/>
         </View>
       );
     };
@@ -66,7 +65,12 @@ export default ({ route }) => {
         selectButton = <>
           <Text />
           <Text />
-          <Button onPress={() => {route.params.buildSetter({subtitle: section.subtitle, title: section.title, image: section.image}); route.params.returnFunc(); }}>SELECT</Button>
+          <Button onPress={() => {
+            let tempState = route.params.buildState;
+            tempState.primary = section.id;           
+            route.params.buildSetter(tempState); 
+            route.params.returnFunc();
+          }}>SELECT</Button>
         </>;
       }
 

@@ -2,18 +2,17 @@ import React, { useState } from 'react';
 import { View, ScrollView, Image } from 'react-native';
 import { Button, Text, useTheme, Layout } from '@ui-kitten/components';
 import Accordion from 'react-native-collapsible/Accordion';
-import { useNavigation } from '@react-navigation/native';
 import ProgressBar from 'react-native-progress/Bar';
+
+import { PRIMARY } from '../Equipment';
 
 export default ({ route }) => {
     const theme = useTheme();
-    const navigation = useNavigation();
 
     const SECTIONS = [
       {
-        image: require('../../assets/ar/kilo141.png'),
         first: true,
-        title: 'Kilo 141',
+        id: 'KILO',
         subtitle: 'Assault Rifle Alpha',
         content: 'Fully automatic assault rifle with an ergonomic design that improves handling, and a steady fire rate helps stay on target.',
         accuracy: '70',
@@ -24,8 +23,7 @@ export default ({ route }) => {
         control: '73',
       },
       {
-        image: require('../../assets/ar/fal.png'),
-        title: 'FAL',
+        id: 'FAL',
         subtitle: 'Assault Rifle Bravo',
         content: 'A semi-automatic assault rifle with a high rate of fire for faster follow up shots.  ',
         accuracy: '74',
@@ -36,8 +34,7 @@ export default ({ route }) => {
         control: '68'
       },
       {
-        image: require('../../assets/ar/m4a1.png'),
-        title: 'M4A1',
+        id: 'M4A1',
         subtitle: 'Assault Rifle Charlie',
         content: 'A fully automatic, all-purpose assault rifle.  Control your shots and this weapon can be very effective at range.',
         accuracy: '71',
@@ -48,8 +45,7 @@ export default ({ route }) => {
         control: '72'
       },
       {
-        image: require('../../assets/ar/fr556.png'),
-        title: 'FR 5.56',
+        id: 'FR',
         subtitle: 'Assault Rifle Delta',
         content: 'A 3 round burst bullpup assault rifle.  A well placed burst can be extremely deadly at intermittent ranges.',
         accuracy: '73',
@@ -60,8 +56,7 @@ export default ({ route }) => {
         control: '72'
       },
       {
-        image: require('../../assets/ar/oden.png'),
-        title: 'Oden',
+        id: 'ODEN',
         subtitle: 'Assault Rifle Echo',
         content: 'A fully automatic bullpup assault rifle maintains a slow cycle rate to help control hard hitting 12.7 x 55mm ammunition.',
         accuracy: '65',
@@ -72,8 +67,7 @@ export default ({ route }) => {
         control: '60'
       },
       {
-        image: require('../../assets/ar/m13.png'),
-        title: 'M13',
+        id: 'M13',
         subtitle: 'Assault Rifle Foxtrot',
         content: 'Automatic assault rifle featuring a short stroke piston system that keeps the fire rate high and the recoil low.',
         accuracy: '72',
@@ -84,8 +78,7 @@ export default ({ route }) => {
         control: '75'
       },
       {
-        image: require('../../assets/ar/scar.png'),
-        title: 'FN Scar 17',
+        id: 'SCAR',
         subtitle: 'Assault Rifle Golf',
         content: 'Large caliber, fully automatic assault rifle that provides high damage over long ranges.',
         accuracy: '69',
@@ -96,8 +89,7 @@ export default ({ route }) => {
         control: '65'
       },
       {
-        image: require('../../assets/ar/ak47.png'),
-        title: 'AK-47',
+        id: 'AK47',
         subtitle: 'Assault Rifle Hotel',
         content: 'Very reliable automatic assault rifle chambered in 7.62mm Soviet.  Large caliber ammunition requires skill to control recoil.',
         accuracy: '68',
@@ -108,8 +100,7 @@ export default ({ route }) => {
         control: '68'
       },
       {
-        image: require('../../assets/ar/ram.png'),
-        title: 'RAM-7',
+        id: 'RAM',
         subtitle: 'Assault Rifle India',
         content: 'A fully automatic bullpup assault rifle with a compact design that lends itself to close-quarter engagements.',
         accuracy: '70',
@@ -120,8 +111,7 @@ export default ({ route }) => {
         control: '74'
       },
       {
-        image: require('../../assets/ar/grau.png'),
-        title: 'Grau 5.56',
+        id: 'GRAU',
         subtitle: 'Assault Rifle Juliet',
         content: 'This modular 5.56 weapon platform is lightweight and maneuverable, with exceptional range.  Precision engineering and world class aftermarket barrels give this weapon extreme potential.',
         accuracy: '70',
@@ -132,8 +122,7 @@ export default ({ route }) => {
         control: '71'
       },
       {
-        image: require('../../assets/ar/amax.png'),
-        title: 'CR-56 AMAX',
+        id: 'AMAX',
         subtitle: 'Assault Rifle Kilo',
         content: 'This lightweight 7.62 x 39mm full auto assault rifle is compact and powerful.  Built exclusively for military use, the standard issue rifle is deadly at mid range combat and easily configured for a variety of assault tactics.',
         accuracy: '67',
@@ -152,9 +141,9 @@ export default ({ route }) => {
         <View style={{ paddingLeft: '4%', paddingRight: '4%', backgroundColor: theme['background-basic-color-2'], borderTopWidth: (section.first ? 0 : 4), borderColor: theme['background-basic-color-1'], flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <View style={{ flex: 0.6 }}>
             <Text style={{ color: theme['text-hint-color'], fontSize: 14 }}>{section.subtitle}</Text>
-            <Text category='h6'>{section.title}</Text>
+            <Text category='h6'>{PRIMARY[section.id].title}</Text>
           </View>
-          <Image source={section.image} resizeMode='contain' style={{ flex: 0.4, height: 100 }}/>
+          <Image source={PRIMARY[section.id].image} resizeMode='contain' style={{ flex: 0.4, height: 100 }}/>
         </View>
       );
     };
@@ -165,7 +154,12 @@ export default ({ route }) => {
         selectButton = <>
           <Text />
           <Text />
-          <Button onPress={() => {route.params.buildSetter({subtitle: section.subtitle, title: section.title, image: section.image}); route.params.returnFunc(); }}>SELECT</Button>
+          <Button onPress={() => {
+            let tempState = route.params.buildState;
+            tempState.primary = section.id;           
+            route.params.buildSetter(tempState); 
+            route.params.returnFunc();
+          }}>SELECT</Button>
         </>;
       }
 
@@ -236,7 +230,7 @@ export default ({ route }) => {
             activeSections={activeARState}
             renderHeader={_renderHeader}
             renderContent={_renderContent}
-            onChange={activeSections => { setActiveARState(activeSections); console.log(activeARState[0]); }}
+            onChange={activeSections => { setActiveARState(activeSections); }}
           />
         </ScrollView>
       </Layout>
