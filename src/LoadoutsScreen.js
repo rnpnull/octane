@@ -80,7 +80,7 @@ const LoadoutTabNavigator = () => {
 }
 
 const AssemblyScreen = ({ navigation }) => {
-  const [ loadoutState, setLoadoutState ] = useState({ primary: 'AMAX', secondary: 'RENETTI', perk1: 'DOUBLE', perk2: 'OVERKILL', perk3: 'AMPED', lethal: 'FRAG', tactical: 'STIM' });
+  const [ loadoutState, setLoadoutState ] = useState({ primary: 'AMAX', overkill: 'FENNEC', secondary: 'RENETTI', perk1: 'DOUBLE', perk2: 'OVERKILL', perk3: 'AMPED', lethal: 'FRAG', tactical: 'STIM' });
   const theme = useTheme();
 
   const updateState = ( data ) => {
@@ -98,17 +98,30 @@ const AssemblyScreen = ({ navigation }) => {
       <ScrollView style={{ backgroundColor: theme['background-basic-color-1'] }}>
         <Layout style={{ flex: 1, alignItems: 'center' }}>
           <Text/>
-          <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Primary', { state: loadoutState, setter: updateState } ); }}>
+          <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Primary', { state: loadoutState, setter: updateState, overkill: false } ); }}>
             <Text style={{ color: theme['text-hint-color'], fontSize: 14 }}>Primary Weapon</Text>
             <Text category='h6'>{PRIMARY[loadoutState.primary].title}</Text>
             <Image source={PRIMARY[loadoutState.primary].image} resizeMode='contain' style={{ width: 256, height: 128, alignSelf: 'center' }}/>
           </Card>
-          <Text/>
-          <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Secondary', { state: loadoutState, setter: updateState } ); }}>
-            <Text style={{ color: theme['text-hint-color'], fontSize: 14 }}>Secondary Weapon</Text>
-            <Text category='h6'>{SECONDARY[loadoutState.secondary].title}</Text>
-            <Image source={SECONDARY[loadoutState.secondary].image} resizeMode='contain' style={{ width: 256, height: 128, alignSelf: 'center' }}/>
-          </Card>
+          { loadoutState.perk2 == 'OVERKILL' ?
+          <>
+            <Text/>
+            <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Primary', { state: loadoutState, setter: updateState, overkill: true } ); }}>
+              <Text style={{ color: theme['text-hint-color'], fontSize: 14 }}>Overkill Weapon</Text>
+              <Text category='h6'>{PRIMARY[loadoutState.overkill].title}</Text>
+              <Image source={PRIMARY[loadoutState.overkill].image} resizeMode='contain' style={{ width: 256, height: 128, alignSelf: 'center' }}/>
+            </Card>
+          </>
+          :
+          <>
+            <Text/>
+            <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Secondary', { state: loadoutState, setter: updateState } ); }}>
+              <Text style={{ color: theme['text-hint-color'], fontSize: 14 }}>Secondary Weapon</Text>
+              <Text category='h6'>{SECONDARY[loadoutState.secondary].title}</Text>
+              <Image source={SECONDARY[loadoutState.secondary].image} resizeMode='contain' style={{ width: 256, height: 128, alignSelf: 'center' }}/>
+            </Card>
+          </>
+          }
           <Text/>
           <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Perk1', { state: loadoutState, setter: updateState } ); }}>
             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}> 

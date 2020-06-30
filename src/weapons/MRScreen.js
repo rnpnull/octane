@@ -89,7 +89,11 @@ export default ({ route }) => {
           <Text />
           <Button onPress={() => {
             let tempState = route.params.buildState;
-            tempState.primary = section.id;           
+            if (route.params.overkill) {
+              tempState.overkill = section.id;
+            } else {
+              tempState.primary = section.id;
+            }          
             route.params.buildSetter(tempState); 
             route.params.returnFunc();
           }}>SELECT</Button>
