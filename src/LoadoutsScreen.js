@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Image, ScrollView, View } from 'react-native';
-import { Card, Text, Layout, Button, useTheme, TopNavigation, TopNavigationAction, Icon } from '@ui-kitten/components';
+import { Card, Text, Layout, useTheme, TopNavigation, TopNavigationAction, Icon } from '@ui-kitten/components';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
+import AsyncStorage from '@react-native-community/async-storage';
+import uuid from 'react-native-uuid';
 
 import { PrimaryWeaponsScreen, SecondaryWeaponsScreen } from './WeaponsScreen';
 import { Perk1Screen, Perk2Screen, Perk3Screen, LethalScreen, TacticalScreen } from './SelectorScreen';
@@ -18,6 +20,10 @@ const MenuIcon = (props) => (
 
 const BackIcon = (props) => (
   <Icon {...props} name='arrow-back-outline'/>
+);
+
+const AddIcon = (props) => (
+  <Icon {...props} name='plus-circle-outline'/>
 );
 
 const RenderMenuAction = () => {
@@ -36,6 +42,13 @@ const RenderBackAction = () => {
   )
 };
 
+const RenderAddAction = () => {
+  const navigation = useNavigation();
+
+  return (
+    <TopNavigationAction icon={AddIcon} onPress={() => navigation.push('Builder', { buildId: uuid.v1() })} />
+  )
+};
 const PopularScreen = () => (
   <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
     <Text category='h1' style={{textAlign:'center'}}>FIND POPULAR LOADOUTS</Text>
@@ -43,12 +56,46 @@ const PopularScreen = () => (
 );
 
 const BuilderScreen = ({ navigation }) => {
+  const theme = useTheme();
+  const [ loadoutState, setLoadoutState ] = useState([]);
+  const [ initState, setInitState ] = useState(false);
+
+  const initList = async () => {
+    let keys = await AsyncStorage.getAllKeys()
+    let savedLoadouts = [];
+    for (const key of keys) {
+      let temp = JSON.parse(await AsyncStorage.getItem(key));
+      temp['id'] = key;
+      savedLoadouts.push(temp);
+    }
+    setLoadoutState(savedLoadouts);
+  }
+  
+  if (!initState) {
+    initList();
+    setInitState(true);
+  }
+
+  useEffect(() => {
+    console.log(JSON.stringify(loadoutState));
+  });
+  
   return (
-    <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text category='h1' style={{textAlign:'center'}}>BUILD A LOADOUT</Text>
-      <Text/>
-      <Button onPress={() => { navigation.push('Builder'); }}>DO IT NOW</Button>
-    </Layout>
+    <ScrollView style={{ backgroundColor: theme['background-basic-color-1'] }}>
+      <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        { loadoutState.length > 0 ?
+        loadoutState.map(loadout =>
+        <>
+          <Text/>
+          <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Builder', { buildId: loadout.id }); }}>
+            <Text style={{ color: theme['text-hint-color'], fontSize: 14 }}>{loadout.id}</Text>
+            <Text category='h6'>{PRIMARY[loadout.primary].title}</Text>
+            <Image source={PRIMARY[loadout.primary].image} resizeMode='contain' style={{ width: 256, height: 128, alignSelf: 'center' }}/>
+          </Card>
+        </>) : <Text category='h1' style={{textAlign:'center'}}>BUILD A LOADOUT</Text>}
+        <Text/>
+      </Layout>
+    </ScrollView>
   );
 }
 
@@ -61,6 +108,7 @@ const LoadoutTabNavigator = () => {
       alignment='center'
       title='Loadouts'
       accessoryLeft={() => <RenderMenuAction />}
+      accessoryRight={() => <RenderAddAction />}
     />
     <TopNav.Navigator
       tabBarOptions={{
@@ -79,14 +127,34 @@ const LoadoutTabNavigator = () => {
   );
 }
 
-const AssemblyScreen = ({ navigation }) => {
+const AssemblyScreen = ({ navigation, route }) => {
   const [ loadoutState, setLoadoutState ] = useState({ primary: 'AMAX', overkill: 'FENNEC', secondary: 'RENETTI', perk1: 'DOUBLE', perk2: 'OVERKILL', perk3: 'AMPED', lethal: 'FRAG', tactical: 'STIM' });
+  const [ initState, setInitState ] = useState(false);
   const theme = useTheme();
 
   const updateState = ( data ) => {
     setLoadoutState(JSON.parse(JSON.stringify(data)));
-    console.log(loadoutState);
   }
+
+  const initLoadout = async () => {
+    const savedLoadout = await AsyncStorage.getItem(route.params.buildId);
+    if (savedLoadout) {
+      setLoadoutState(JSON.parse(savedLoadout));
+    } else {
+      AsyncStorage.setItem(route.params.buildId, JSON.stringify(loadoutState));
+    }
+  }
+  
+  if (!initState) {
+    initLoadout();
+    setInitState(true);
+  }
+
+  useEffect(() => {
+    if (initState) {
+      AsyncStorage.setItem(route.params.buildId, JSON.stringify(loadoutState));
+    }
+  });
 
   return (
     <>
