@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, createContext, useContext } from 'react';
 import { Image, ScrollView, View } from 'react-native';
 import { Card, Text, Layout, useTheme, TopNavigation, TopNavigationAction, Icon } from '@ui-kitten/components';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
@@ -13,6 +13,8 @@ import { PRIMARY, SECONDARY, PERK1, PERK2, PERK3, LETHAL, TACTICAL } from './Equ
 
 const TopNav = createMaterialTopTabNavigator();
 const StackNav = createStackNavigator();
+
+const UserContext = createContext({});
 
 const MenuIcon = (props) => (
   <Icon {...props} name='menu-outline'/>
@@ -44,9 +46,10 @@ const RenderBackAction = () => {
 
 const RenderAddAction = () => {
   const navigation = useNavigation();
+  const [ updateState, setUpdateState ] = useContext(UserContext);
 
   return (
-    <TopNavigationAction icon={AddIcon} onPress={() => navigation.push('Builder', { buildId: uuid.v1() })} />
+    <TopNavigationAction icon={AddIcon} onPress={() => navigation.push('Builder', { buildId: uuid.v1(), update: setUpdateState })} />
   )
 };
 const PopularScreen = () => (
@@ -55,10 +58,10 @@ const PopularScreen = () => (
   </Layout>
 );
 
-const BuilderScreen = ({ navigation }) => {
+const BuilderScreen = ({ navigation, route }) => {
   const theme = useTheme();
   const [ loadoutState, setLoadoutState ] = useState([]);
-  const [ initState, setInitState ] = useState(false);
+  const [ updateState, setUpdateState ] = useContext(UserContext);
 
   const initList = async () => {
     let keys = await AsyncStorage.getAllKeys()
@@ -71,14 +74,11 @@ const BuilderScreen = ({ navigation }) => {
     setLoadoutState(savedLoadouts);
   }
   
-  if (!initState) {
+  if (updateState) {
     initList();
-    setInitState(true);
+    setUpdateState(false);
+    console.log('updated builds list');
   }
-
-  useEffect(() => {
-    console.log(JSON.stringify(loadoutState));
-  });
   
   return (
     <ScrollView style={{ backgroundColor: theme['background-basic-color-1'] }}>
@@ -87,7 +87,7 @@ const BuilderScreen = ({ navigation }) => {
         loadoutState.map(loadout =>
         <>
           <Text/>
-          <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Builder', { buildId: loadout.id }); }}>
+          <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Builder', { buildId: loadout.id, update: setUpdateState }); }}>
             <Text style={{ color: theme['text-hint-color'], fontSize: 14 }}>{loadout.id}</Text>
             <Text category='h6'>{PRIMARY[loadout.primary].title}</Text>
             <Image source={PRIMARY[loadout.primary].image} resizeMode='contain' style={{ width: 256, height: 128, alignSelf: 'center' }}/>
@@ -101,29 +101,34 @@ const BuilderScreen = ({ navigation }) => {
 
 const LoadoutTabNavigator = () => {
   const theme = useTheme();
+  const [ updateState, setUpdateState ] = useState(true);
+
+  const getState = () => {
+    return (updateState);
+  }
 
   return (
-  <>
-    <TopNavigation
-      alignment='center'
-      title='Loadouts'
-      accessoryLeft={() => <RenderMenuAction />}
-      accessoryRight={() => <RenderAddAction />}
-    />
-    <TopNav.Navigator
-      tabBarOptions={{
-        activeTintColor: theme['text-primary-color'],
-        inactiveTintColor: theme['text-hint-color'],
-        indicatorStyle: {  backgroundColor: theme['text-primary-color'], height: 4 },
-        labelStyle: { fontWeight: 'bold' },
-        style: { backgroundColor: theme['background-basic-color-1'] },
-      }}
-      style={{ backgroundColor: theme['background-basic-color-1'] }}
-    >
-      <TopNav.Screen name='Popular' component={PopularScreen}/>
-      <TopNav.Screen name='Builder' component={BuilderScreen}/>
-    </TopNav.Navigator>
-  </>
+    <UserContext.Provider value={[ updateState, setUpdateState ]}>
+      <TopNavigation
+        alignment='center'
+        title='Loadouts'
+        accessoryLeft={() => <RenderMenuAction />}
+        accessoryRight={() => <RenderAddAction />}
+      />
+      <TopNav.Navigator
+        tabBarOptions={{
+          activeTintColor: theme['text-primary-color'],
+          inactiveTintColor: theme['text-hint-color'],
+          indicatorStyle: {  backgroundColor: theme['text-primary-color'], height: 4 },
+          labelStyle: { fontWeight: 'bold' },
+          style: { backgroundColor: theme['background-basic-color-1'] },
+        }}
+        style={{ backgroundColor: theme['background-basic-color-1'] }}
+      >
+        <TopNav.Screen name='Popular' component={PopularScreen}/>
+        <TopNav.Screen name='Builder' component={BuilderScreen}/>
+      </TopNav.Navigator>
+    </UserContext.Provider>
   );
 }
 
@@ -154,6 +159,7 @@ const AssemblyScreen = ({ navigation, route }) => {
     if (initState) {
       AsyncStorage.setItem(route.params.buildId, JSON.stringify(loadoutState));
     }
+    route.params.update(true);
   });
 
   return (
