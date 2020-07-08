@@ -58,7 +58,7 @@ const PopularScreen = () => (
   </Layout>
 );
 
-const BuilderScreen = ({ navigation, route }) => {
+const BuilderScreen = ({ navigation }) => {
   const theme = useTheme();
   const [ loadoutState, setLoadoutState ] = useState([]);
   const [ updateState, setUpdateState ] = useContext(UserContext);
@@ -102,10 +102,6 @@ const BuilderScreen = ({ navigation, route }) => {
 const LoadoutTabNavigator = () => {
   const theme = useTheme();
   const [ updateState, setUpdateState ] = useState(true);
-
-  const getState = () => {
-    return (updateState);
-  }
 
   return (
     <UserContext.Provider value={[ updateState, setUpdateState ]}>
