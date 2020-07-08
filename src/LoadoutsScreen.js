@@ -88,9 +88,28 @@ const BuilderScreen = ({ navigation }) => {
         <>
           <Text/>
           <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Builder', { buildId: loadout.id, update: setUpdateState }); }}>
-            <Text style={{ color: theme['text-hint-color'], fontSize: 14 }}>{loadout.id}</Text>
-            <Text category='h6'>{PRIMARY[loadout.primary].title}</Text>
-            <Image source={PRIMARY[loadout.primary].image} resizeMode='contain' style={{ width: 256, height: 128, alignSelf: 'center' }}/>
+            <Text category='h6' style={{ textAlign: 'center' }}>{loadout.id}</Text>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+              <View style={{ alignContent: 'center' }}>
+                <Text style={{ color: theme['text-hint-color'], textAlign: 'center' }}>Primary</Text>
+                <Image source={PRIMARY[loadout.primary].image} resizeMode='contain' style={{ flex: .4, width: 128, height: 64, alignSelf: 'center' }}/>
+              </View>
+              <View style={{ alignContent: 'center' }}>
+                <Text style={{ color: theme['text-hint-color'], textAlign: 'center' }}>Secondary</Text>
+                <Image source={SECONDARY[loadout.secondary].image} resizeMode='contain' style={{ flex: .4, width: 128, height: 64, alignSelf: 'center' }}/>
+              </View>
+            </View>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <View style={{ flex: .5, flexDirection: 'row', justifyContent: 'flex-start' }}>
+                <Image source={PERK1[loadout.perk1].image} resizeMode='contain' style={{ flex: .3, width: 64, height: 64, alignSelf: 'center' }}/>
+                <Image source={PERK2[loadout.perk2].image} resizeMode='contain' style={{ flex: .3, width: 64, height: 64, alignSelf: 'center' }}/>
+                <Image source={PERK3[loadout.perk3].image} resizeMode='contain' style={{ flex: .3, width: 64, height: 64, alignSelf: 'center' }}/>
+              </View>
+              <View style={{ flex: .5, flexDirection: 'row', justifyContent: 'flex-end' }}>
+                <Image source={LETHAL[loadout.lethal].image} resizeMode='contain' style={{ flex: .3, width: 64, height: 64, alignSelf: 'center' }}/>
+                <Image source={TACTICAL[loadout.tactical].image} resizeMode='contain' style={{ flex: .3, width: 64, height: 64, alignSelf: 'center' }}/>
+              </View>
+            </View>
           </Card>
         </>) : <Text category='h1' style={{textAlign:'center'}}>BUILD A LOADOUT</Text>}
         <Text/>
