@@ -66,6 +66,7 @@ const BuilderScreen = ({ navigation }) => {
   const initList = async () => {
     let keys = await AsyncStorage.getAllKeys()
     let savedLoadouts = [];
+    console.log(keys);
     for (const key of keys) {
       let temp = JSON.parse(await AsyncStorage.getItem(key));
       temp['id'] = key;
@@ -83,7 +84,7 @@ const BuilderScreen = ({ navigation }) => {
   return (
     <ScrollView style={{ backgroundColor: theme['background-basic-color-1'] }}>
       <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        { loadoutState.length > 0 ?
+        { loadoutState.length != 0 ?
         loadoutState.map(loadout =>
         <>
           <Text/>
@@ -91,23 +92,36 @@ const BuilderScreen = ({ navigation }) => {
             <Text category='h6' style={{ textAlign: 'center' }}>{loadout.id}</Text>
             <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
               <View style={{ alignContent: 'center' }}>
-                <Text style={{ color: theme['text-hint-color'], textAlign: 'center' }}>Primary</Text>
-                <Image source={PRIMARY[loadout.primary].image} resizeMode='contain' style={{ flex: .4, width: 128, height: 64, alignSelf: 'center' }}/>
+                <Text style={{ color: theme['text-hint-color'], textAlign: 'center', paddingTop: '4%', paddingBottom: '4%' }}>Primary</Text>
+                <Image source={PRIMARY[loadout.primary].image} resizeMode='contain' style={{ flex: .5, width: 128, height: 64, alignSelf: 'center' }}/>
               </View>
+              { loadout.perk2 == 'OVERKILL' ?
               <View style={{ alignContent: 'center' }}>
-                <Text style={{ color: theme['text-hint-color'], textAlign: 'center' }}>Secondary</Text>
-                <Image source={SECONDARY[loadout.secondary].image} resizeMode='contain' style={{ flex: .4, width: 128, height: 64, alignSelf: 'center' }}/>
+                <Text style={{ color: theme['text-hint-color'], textAlign: 'center', paddingTop: '4%', paddingBottom: '4%' }}>Secondary</Text>
+                <Image source={PRIMARY[loadout.overkill].image} resizeMode='contain' style={{ flex: .5, width: 128, height: 64, alignSelf: 'center' }}/>
               </View>
+              :
+              <View style={{ alignContent: 'center' }}>
+                <Text style={{ color: theme['text-hint-color'], textAlign: 'center', paddingTop: '4%', paddingBottom: '4%' }}>Secondary</Text>
+                <Image source={SECONDARY[loadout.secondary].image} resizeMode='contain' style={{ flex: .5, width: 128, height: 64, alignSelf: 'center' }}/>
+              </View>
+              }
             </View>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              <View style={{ flex: .5, flexDirection: 'row', justifyContent: 'flex-start' }}>
-                <Image source={PERK1[loadout.perk1].image} resizeMode='contain' style={{ flex: .3, width: 64, height: 64, alignSelf: 'center' }}/>
-                <Image source={PERK2[loadout.perk2].image} resizeMode='contain' style={{ flex: .3, width: 64, height: 64, alignSelf: 'center' }}/>
-                <Image source={PERK3[loadout.perk3].image} resizeMode='contain' style={{ flex: .3, width: 64, height: 64, alignSelf: 'center' }}/>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+              <View style={{ flex: .5 }}>
+                <Text style={{ color: theme['text-hint-color'], textAlign: 'center', paddingTop: '4%', paddingBottom: '4%' }}>Perks</Text>
+                <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                  <Image source={PERK1[loadout.perk1].image} resizeMode='contain' style={{ flex: .3, width: 64, height: 64, alignSelf: 'center' }}/>
+                  <Image source={PERK2[loadout.perk2].image} resizeMode='contain' style={{ flex: .3, width: 64, height: 64, alignSelf: 'center' }}/>
+                  <Image source={PERK3[loadout.perk3].image} resizeMode='contain' style={{ flex: .3, width: 64, height: 64, alignSelf: 'center' }}/>
+                </View>
               </View>
-              <View style={{ flex: .5, flexDirection: 'row', justifyContent: 'flex-end' }}>
-                <Image source={LETHAL[loadout.lethal].image} resizeMode='contain' style={{ flex: .3, width: 64, height: 64, alignSelf: 'center' }}/>
-                <Image source={TACTICAL[loadout.tactical].image} resizeMode='contain' style={{ flex: .3, width: 64, height: 64, alignSelf: 'center' }}/>
+              <View style={{ flex: .5 }}>
+                <Text style={{ color: theme['text-hint-color'], textAlign: 'center', paddingTop: '4%', paddingBottom: '4%' }}>Utility</Text>
+                <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                  <Image source={LETHAL[loadout.lethal].image} resizeMode='contain' style={{ flex: .3, width: 64, height: 64, alignSelf: 'center' }}/>
+                  <Image source={TACTICAL[loadout.tactical].image} resizeMode='contain' style={{ flex: .3, width: 64, height: 64, alignSelf: 'center' }}/>
+                </View>
               </View>
             </View>
           </Card>
