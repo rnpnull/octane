@@ -31,6 +31,8 @@ const AddIcon = (props) => (
 
 const EditIcon = (props) => (
   <Icon {...props} name='edit-2-outline'/>
+);
+
 const TrashIcon = (props) => (
   <Icon {...props} name='trash-2-outline'/>
 );
