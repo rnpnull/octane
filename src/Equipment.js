@@ -1,5 +1,5 @@
 export const PRIMARY = {
-    KILO: { title: 'Kilo 141', image: require('../assets/weps/ar/kilo141/img.png') },
+    KILO: { title: 'Kilo 141', image: require('../assets/weps/ar/kilo141/img.png'), info: require('../assets/weps/ar/kilo141/info.json') },
     FAL: { title: 'FAL', image: require('../assets/weps/ar/fal/img.png') },
     M4A1: { title: 'M4A1', image: require('../assets/weps/ar/m4a1/img.png') },
     FR: { title: 'FR 5.56', image: require('../assets/weps/ar/fr556/img.png') },
@@ -50,9 +50,9 @@ export const SECONDARY = {
     STRELA: { title: 'Strela-P', image: require('../assets/weps/lc/strela_p/img.png') },
     JOKR: { title: 'JOKR', image: require('../assets/weps/lc/jokr/img.png') },
     RPG: { title: 'RPG-7', image: require('../assets/weps/lc/rpg7/img.png') },
-    KNIFE: { title: 'Combat Knife', image: require('../assets/weps/ml/combat_knife/img.png' )},
-    RIOT: { title: 'Riot Shield', image: require('../assets/weps/ml/riot_shield/img.png' )},
-    KALI: { title: 'Kali Sticks', image: require('../assets/weps/ml/kali_stick/img.png' )}
+    KNIFE: { title: 'Combat Knife', image: require('../assets/weps/ml/combat_knife/img.png') },
+    RIOT: { title: 'Riot Shield', image: require('../assets/weps/ml/riot_shield/img.png') },
+    KALI: { title: 'Kali Sticks', image: require('../assets/weps/ml/kali_stick/img.png') }
 };
 
 export const PERK1 = {

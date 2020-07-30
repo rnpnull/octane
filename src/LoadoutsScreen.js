@@ -7,10 +7,12 @@ import { createStackNavigator } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-community/async-storage';
 import uuid from 'react-native-uuid';
 import Modal from 'react-native-modal';
+import ProgressBar from 'react-native-progress/Bar';
 
 import { PrimaryWeaponsScreen, SecondaryWeaponsScreen } from './WeaponsScreen';
 import { Perk1Screen, Perk2Screen, Perk3Screen, LethalScreen, TacticalScreen } from './SelectorScreen';
 import { PRIMARY, SECONDARY, PERK1, PERK2, PERK3, LETHAL, TACTICAL } from './Equipment';
+import { PRIMARYDIR, SECONDARYDIR } from './Gunsmith';
 
 const TopNav = createMaterialTopTabNavigator();
 const StackNav = createStackNavigator();
@@ -273,7 +275,7 @@ const AssemblyScreen = ({ navigation, route }) => {
               <Text category='h6'>{PRIMARY[loadoutState.primary].title}</Text>
               <Image source={PRIMARY[loadoutState.primary].image} resizeMode='contain' style={{ width: 256, height: 128, alignSelf: 'center' }}/>
               <Text/>
-              <Button onPress={() => navigation.push('Attachment')}>GUNSMITH</Button>
+              <Button onPress={() => navigation.push('Gunsmith', { loadout: loadoutState })}>GUNSMITH</Button>
             </Card>
             { loadoutState.perk2 == 'OVERKILL' ?
             <>
@@ -283,7 +285,7 @@ const AssemblyScreen = ({ navigation, route }) => {
                 <Text category='h6'>{PRIMARY[loadoutState.overkill].title}</Text>
                 <Image source={PRIMARY[loadoutState.overkill].image} resizeMode='contain' style={{ width: 256, height: 128, alignSelf: 'center' }}/>
                 <Text/>
-                <Button onPress={() => navigation.push('Attachment')}>GUNSMITH</Button>
+                <Button onPress={() => navigation.push('Gunsmith', { loadout: loadoutState })}>GUNSMITH</Button>
               </Card>
             </>
             :
@@ -294,7 +296,7 @@ const AssemblyScreen = ({ navigation, route }) => {
                 <Text category='h6'>{SECONDARY[loadoutState.secondary].title}</Text>
                 <Image source={SECONDARY[loadoutState.secondary].image} resizeMode='contain' style={{ width: 256, height: 128, alignSelf: 'center' }}/>
                 <Text/>
-                <Button onPress={() => navigation.push('Attachment')}>GUNSMITH</Button>
+                <Button onPress={() => navigation.push('Gunsmith', { loadout: loadoutState })}>GUNSMITH</Button>
               </Card>
             </>
             }
@@ -356,7 +358,72 @@ const AssemblyScreen = ({ navigation, route }) => {
   }
 }
 
-const AttachmentScreen = ({ navigation }) => (
+const GunsmithScreen = ({ navigation, route }) => {
+  const theme = useTheme();
+
+  const [ loadoutState, setLoadoutState ] = useState(route.params.loadout);
+  const [ initState, setInit ] = useState(false);
+  const [ weaponInfo, setWepInf ] = useState({});
+
+  useEffect(() => {
+    (async () => {
+      if (!initState)
+        setWepInf(PRIMARY[loadoutState.primary].info);
+    })();
+  }, [initState]);
+
+  useEffect(() => {
+    if (!initState && weaponInfo.name) {
+      console.log(weaponInfo.statBars);
+      setInit(true);
+    }
+  }, [weaponInfo]);
+  
+  if ( !initState ) {
+    return (
+      <>
+        <TopNavigation
+          alignment='center'
+          title='Loading...'
+          accessoryLeft={() => <RenderBackAction/>}
+        />
+        <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          <Spinner status='primary'/>
+        </Layout>
+      </>
+    )
+  } else {
+    return (
+      <>
+        <TopNavigation
+          alignment='center'
+          title='Gunsmith'
+          accessoryLeft={() => <RenderBackAction/>}
+        />
+        <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Tactical', { state: loadoutState, setter: updateState } ); }}>
+            {weaponInfo.statBars.map(stat => (
+              <>
+                <View style={{ flexDirection: 'row' }}>
+                  <View style={{ flex: .95 }}>
+                    <View style={{ paddingBottom: 4, flexDirection: 'row', justifyContent: 'space-between' }}>
+                      <Text style={{ fontWeight: 'bold' }}>{stat.label}</Text>
+                      <Text style={{ fontWeight: 'bold' }}>{stat.value}</Text>
+                    </View>
+                    <ProgressBar animated={false} color={theme['text-primary-color']} progress={stat.value / 100} width={null} borderRadius={0} />
+                  </View>
+                </View>
+                <Text />
+              </>
+            ))}
+          </Card>
+        </Layout>
+      </>
+    );
+  }
+}
+
+const AttachmentScreen = ({ navigation, route }) => (
   <>
     <TopNavigation
       alignment='center'
@@ -400,6 +467,7 @@ const LoadoutStack = () => {
         <StackNav.Screen name='Lethal' component={LethalScreen} />
         <StackNav.Screen name='Tactical' component={TacticalScreen} />
         <StackNav.Screen name='Builder' component={AssemblyScreen} />
+        <StackNav.Screen name='Gunsmith' component={GunsmithScreen} />
         <StackNav.Screen name='Attachment' component={AttachmentScreen} />
       </StackNav.Navigator>
       <Modal
