@@ -1,6 +1,6 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { Image, ScrollView, View } from 'react-native';
-import { Card, Text, Layout, useTheme, TopNavigation, TopNavigationAction, Icon, Input, Button, Spinner } from '@ui-kitten/components';
+import { Card, Text, Layout, useTheme, TopNavigation, TopNavigationAction, Icon, Input, Button, Spinner, Divider, ListItem } from '@ui-kitten/components';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -364,6 +364,7 @@ const GunsmithScreen = ({ navigation, route }) => {
   const [ loadoutState, setLoadoutState ] = useState(route.params.loadout);
   const [ initState, setInit ] = useState(false);
   const [ weaponInfo, setWepInf ] = useState({});
+  const [ attachInfo, setAttInf ] = useState(['e']);
 
   useEffect(() => {
     (async () => {
@@ -374,10 +375,20 @@ const GunsmithScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     if (!initState && weaponInfo.name) {
+      setAttInf(PRIMARY[loadoutState.primary].attach);
+    }
+  }, [weaponInfo]);
+  
+  useEffect(() => {
+    if (!initState && attachInfo[0] != 'e') {
       console.log(weaponInfo.statBars);
       setInit(true);
     }
-  }, [weaponInfo]);
+  }, [attachInfo]);
+
+  const RightIcon = (props) => (
+    <Icon {...props} name='chevron-right-outline'/>
+  );
   
   if ( !initState ) {
     return (
@@ -400,23 +411,65 @@ const GunsmithScreen = ({ navigation, route }) => {
           title='Gunsmith'
           accessoryLeft={() => <RenderBackAction/>}
         />
-        <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%' }} onPress={() => { navigation.push('Tactical', { state: loadoutState, setter: updateState } ); }}>
-            {weaponInfo.statBars.map(stat => (
-              <>
-                <View style={{ flexDirection: 'row' }}>
-                  <View style={{ flex: .95 }}>
-                    <View style={{ paddingBottom: 4, flexDirection: 'row', justifyContent: 'space-between' }}>
-                      <Text style={{ fontWeight: 'bold' }}>{stat.label}</Text>
-                      <Text style={{ fontWeight: 'bold' }}>{stat.value}</Text>
-                    </View>
-                    <ProgressBar animated={false} color={theme['text-primary-color']} progress={stat.value / 100} width={null} borderRadius={0} />
+        <Layout style={{ flex: 1 }}>
+          <Text/>
+          <Card style={{ backgroundColor: theme['background-basic-color-2'], borderWidth: 0, width: '95%', alignSelf: 'center' }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+              <View style={{ flex: 0.6 }}>
+                <Text style={{ color: theme['text-hint-color'], fontSize: 14 }}>{weaponInfo.class + ' ' + weaponInfo.altName}</Text>
+                <Text category='h6'>{PRIMARY[loadoutState.primary].title}</Text>
+              </View>
+              <Image source={PRIMARY[loadoutState.primary].image} resizeMode='contain' style={{ flex: 0.4, height: 60 }}/>
+            </View>
+            <Text/>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              {weaponInfo.statBars.slice(0, 2).map(stat => (
+                <View style={{ flex: 0.48 }}>
+                  <View style={{ paddingBottom: 4, flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <Text style={{ fontWeight: 'bold' }}>{stat.label}</Text>
+                    <Text style={{ fontWeight: 'bold' }}>{stat.value}</Text>
                   </View>
+                  <ProgressBar animated={false} color={theme['text-primary-color']} progress={stat.value / 100} width={null} borderRadius={0} />
                 </View>
-                <Text />
-              </>
-            ))}
+              ))}
+            </View>
+            <Text />
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              {weaponInfo.statBars.slice(2, 4).map(stat => (
+                <View style={{ flex: 0.48 }}>
+                  <View style={{ paddingBottom: 4, flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <Text style={{ fontWeight: 'bold' }}>{stat.label}</Text>
+                    <Text style={{ fontWeight: 'bold' }}>{stat.value}</Text>
+                  </View>
+                  <ProgressBar animated={false} color={theme['text-primary-color']} progress={stat.value / 100} width={null} borderRadius={0} />
+                </View>
+              ))}
+            </View>
+            <Text />
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              {weaponInfo.statBars.slice(4, 6).map(stat => (
+                <View style={{ flex: 0.48 }}>
+                  <View style={{ paddingBottom: 4, flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <Text style={{ fontWeight: 'bold' }}>{stat.label}</Text>
+                    <Text style={{ fontWeight: 'bold' }}>{stat.value}</Text>
+                  </View>
+                  <ProgressBar animated={false} color={theme['text-primary-color']} progress={stat.value / 100} width={null} borderRadius={0} />
+                </View>
+              ))}
+            </View>
           </Card>
+          <Text/>
+          <ScrollView>
+            {attachInfo.map(attach => (
+              <ListItem
+                style={{ backgroundColor: theme['background-basic-color-2'] }}
+                title={attach.type}
+                description='None'
+                activeOpacity={0.4}
+                accessoryRight={RightIcon}
+              />
+            ))}
+          </ScrollView>
         </Layout>
       </>
     );

@@ -171,15 +171,15 @@ export default ({ route }) => {
         <View style={{ padding: '4%', backgroundColor: theme['background-basic-color-1'] }}>
           <Text>{section.content}</Text>
           <Text />
-          <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-            <View style={{ flex: 0.45 }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <View style={{ flex: 0.48 }}>
               <View style={{ paddingBottom: 4, flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Text style={{ fontWeight: 'bold' }}>Accuracy</Text>
                 <Text style={{ fontWeight: 'bold' }}>{section.accuracy}</Text>
               </View>
               <ProgressBar animated={false} color={theme['text-primary-color']} progress={section.accuracy / 100} width={null} borderRadius={0} />
             </View>
-            <View style={{ flex: 0.45 }}>
+            <View style={{ flex: 0.48 }}>
               <View style={{ paddingBottom: 4, flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Text style={{ fontWeight: 'bold' }}>Damage</Text>
                 <Text style={{ fontWeight: 'bold' }}>{section.damage}</Text>
@@ -188,15 +188,15 @@ export default ({ route }) => {
             </View>
           </View>
           <Text />
-          <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-            <View style={{ flex: 0.45 }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <View style={{ flex: 0.48 }}>
               <View style={{ paddingBottom: 4, flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Text style={{ fontWeight: 'bold' }}>Range</Text>
                 <Text style={{ fontWeight: 'bold' }}>{section.range}</Text>
               </View>
               <ProgressBar animated={false} color={theme['text-primary-color']} progress={section.range / 100} width={null} borderRadius={0} />
             </View>
-            <View style={{ flex: 0.45 }}>
+            <View style={{ flex: 0.48 }}>
               <View style={{ paddingBottom: 4, flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Text style={{ fontWeight: 'bold' }}>Fire Rate</Text>
                 <Text style={{ fontWeight: 'bold' }}>{section.firerate}</Text>
@@ -205,15 +205,15 @@ export default ({ route }) => {
             </View>
           </View>
           <Text />
-          <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-            <View style={{ flex: 0.45 }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <View style={{ flex: 0.48 }}>
               <View style={{ paddingBottom: 4, flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Text style={{ fontWeight: 'bold' }}>Mobility</Text>
                 <Text style={{ fontWeight: 'bold' }}>{section.mobility}</Text>
               </View>
               <ProgressBar animated={false} color={theme['text-primary-color']} progress={section.mobility / 100} width={null} borderRadius={0} />
             </View>
-            <View style={{ flex: 0.45 }}>
+            <View style={{ flex: 0.48 }}>
               <View style={{ paddingBottom: 4, flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Text style={{ fontWeight: 'bold' }}>Control</Text>
                 <Text style={{ fontWeight: 'bold' }}>{section.control}</Text>
