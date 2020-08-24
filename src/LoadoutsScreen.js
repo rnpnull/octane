@@ -1,6 +1,6 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { Image, ScrollView, View } from 'react-native';
-import { Card, Text, Layout, useTheme, TopNavigation, TopNavigationAction, Icon, Input, Button, Spinner, Divider, ListItem } from '@ui-kitten/components';
+import { Card, Text, Layout, useTheme, TopNavigation, TopNavigationAction, Icon, Input, Button, Spinner, ListItem, Radio, RadioGroup } from '@ui-kitten/components';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -12,12 +12,13 @@ import ProgressBar from 'react-native-progress/Bar';
 import { PrimaryWeaponsScreen, SecondaryWeaponsScreen } from './WeaponsScreen';
 import { Perk1Screen, Perk2Screen, Perk3Screen, LethalScreen, TacticalScreen } from './SelectorScreen';
 import { PRIMARY, SECONDARY, PERK1, PERK2, PERK3, LETHAL, TACTICAL } from './Equipment';
-import { PRIMARYDIR, SECONDARYDIR } from './Gunsmith';
+import { ATTACHIMG } from './Gunsmith';
 
 const TopNav = createMaterialTopTabNavigator();
 const StackNav = createStackNavigator();
 
 const UserContext = createContext();
+const GunsmithContext = createContext();
 
 const MenuIcon = (props) => (
   <Icon {...props} name='menu-outline'/>
@@ -114,7 +115,6 @@ const BuilderScreen = ({ navigation }) => {
   if (updateState) {
     initList();
     setUpdateState(false);
-    console.log('updated builds list');
   }
   
   return (
@@ -362,6 +362,7 @@ const GunsmithScreen = ({ navigation, route }) => {
   const theme = useTheme();
 
   const [ loadoutState, setLoadoutState ] = useState(route.params.loadout);
+  const [ statState, setStatState ] = useState({ Accuracy: 0, Damage: 0, Range: 0, 'Fire Rate': 0, Mobility: 0, Control: 0 });
   const [ initState, setInit ] = useState(false);
   const [ weaponInfo, setWepInf ] = useState({});
   const [ attachInfo, setAttInf ] = useState(['e']);
@@ -381,14 +382,13 @@ const GunsmithScreen = ({ navigation, route }) => {
   
   useEffect(() => {
     if (!initState && attachInfo[0] != 'e') {
-      console.log(weaponInfo.statBars);
       setInit(true);
     }
   }, [attachInfo]);
 
-  const RightIcon = (props) => (
-    <Icon {...props} name='chevron-right-outline'/>
-  );
+  useEffect(() => {
+    console.log('changed stat');
+  }, [statState]);
   
   if ( !initState ) {
     return (
@@ -427,9 +427,9 @@ const GunsmithScreen = ({ navigation, route }) => {
                 <View style={{ flex: 0.48 }}>
                   <View style={{ paddingBottom: 4, flexDirection: 'row', justifyContent: 'space-between' }}>
                     <Text style={{ fontWeight: 'bold' }}>{stat.label}</Text>
-                    <Text style={{ fontWeight: 'bold' }}>{stat.value}</Text>
+                    <Text style={{ fontWeight: 'bold' }}>{stat.value + statState[stat.label]}</Text>
                   </View>
-                  <ProgressBar animated={false} color={theme['text-primary-color']} progress={stat.value / 100} width={null} borderRadius={0} />
+                  <ProgressBar animated={false} color={theme['text-primary-color']} progress={(stat.value + statState[stat.label]) / 100} width={null} borderRadius={0} />
                 </View>
               ))}
             </View>
@@ -439,9 +439,9 @@ const GunsmithScreen = ({ navigation, route }) => {
                 <View style={{ flex: 0.48 }}>
                   <View style={{ paddingBottom: 4, flexDirection: 'row', justifyContent: 'space-between' }}>
                     <Text style={{ fontWeight: 'bold' }}>{stat.label}</Text>
-                    <Text style={{ fontWeight: 'bold' }}>{stat.value}</Text>
+                    <Text style={{ fontWeight: 'bold' }}>{stat.value + statState[stat.label]}</Text>
                   </View>
-                  <ProgressBar animated={false} color={theme['text-primary-color']} progress={stat.value / 100} width={null} borderRadius={0} />
+                  <ProgressBar animated={false} color={theme['text-primary-color']} progress={(stat.value + statState[stat.label]) / 100} width={null} borderRadius={0} />
                 </View>
               ))}
             </View>
@@ -451,30 +451,131 @@ const GunsmithScreen = ({ navigation, route }) => {
                 <View style={{ flex: 0.48 }}>
                   <View style={{ paddingBottom: 4, flexDirection: 'row', justifyContent: 'space-between' }}>
                     <Text style={{ fontWeight: 'bold' }}>{stat.label}</Text>
-                    <Text style={{ fontWeight: 'bold' }}>{stat.value}</Text>
+                    <Text style={{ fontWeight: 'bold' }}>{stat.value + statState[stat.label]}</Text>
                   </View>
-                  <ProgressBar animated={false} color={theme['text-primary-color']} progress={stat.value / 100} width={null} borderRadius={0} />
+                  <ProgressBar animated={false} color={theme['text-primary-color']} progress={(stat.value + statState[stat.label]) / 100} width={null} borderRadius={0} />
                 </View>
               ))}
             </View>
           </Card>
           <Text/>
-          <ScrollView>
-            {attachInfo.map(attach => (
-              <ListItem
-                style={{ backgroundColor: theme['background-basic-color-2'] }}
-                title={attach.type}
-                description='None'
-                activeOpacity={0.4}
-                accessoryRight={RightIcon}
-              />
-            ))}
-          </ScrollView>
+          <GunsmithContext.Provider
+            value={[ statState, setStatState ]}
+          >
+            <AttachStack attachInfo={attachInfo} gun={loadoutState.primary} stats={statState} setter={setStatState}/>
+          </GunsmithContext.Provider>
         </Layout>
       </>
     );
   }
 }
+
+const SlotsScreen = ({ navigation, route }) => {
+  const theme = useTheme();
+  const [ statState, setStatState ] = useContext(GunsmithContext);
+
+  const RightIcon = (props) => (
+    <Icon {...props} name='chevron-right-outline'/>
+  );
+
+  const testStat = () => {
+    let temp = statState;
+    temp['Accuracy'] += 1;
+    setStatState(temp);
+  };
+
+  return (
+    <ScrollView style={{ backgroundColor: theme['background-basic-color-1'] }}>
+      {route.params.attachInfo.map(attach => (
+        <ListItem
+          style={{ backgroundColor: theme['background-basic-color-2'] }}
+          title={attach.type}
+          description='None'
+          activeOpacity={0.4}
+          accessoryRight={RightIcon}
+          onPress={() => navigation.push('Selector', { attach: attach })}
+        />
+      ))}
+      <ListItem
+        style={{ backgroundColor: theme['background-basic-color-2'] }}
+        title='Test'
+        activeOpacity={0.4}
+        accessoryRight={RightIcon}
+        onPress={() => testStat()}
+      />
+    </ScrollView>
+  )
+};
+
+const SelectorScreen = ({ navigation, route }) => {
+  const theme = useTheme();
+
+  const [ checked, setChecked ] = React.useState('None');
+  const [ stats, setStats ] = React.useState([]);
+  const [ statState, setStatState ] = useContext(GunsmithContext);
+
+  const AttachIcon = ({ props, img }) => (
+    <Image source={ATTACHIMG[route.params.gun][img]} resizeMode='contain' style={{ aspectRatio: 1, width: 40 }}/>
+  );
+
+  useEffect(() => {
+    if (checked == 'None') {
+      setStatState(statState);
+    } else {
+      let temp = statState;
+      for (let stat of stats) {
+        temp[stat.label] += stat.value;
+      }
+      setStatState(temp);
+    }
+  }, [checked]);
+
+  return (
+    <>
+      <TopNavigation
+        alignment='center'
+        title={route.params.attach.type}
+        accessoryLeft={() => <RenderBackAction/>}
+        style={{ backgroundColor: theme['background-basic-color-2'] }}
+      />
+      <ScrollView style={{ backgroundColor: theme['background-basic-color-1'] }}>
+        <ListItem
+          style={{ backgroundColor: theme['background-basic-color-2'] }}
+          title='None'
+          activeOpacity={0.4}
+          accessoryRight={() => <Radio
+            checked={checked == 'None'}
+            onChange={() => setChecked('None')}/>}
+          onPress={() => setChecked('None')}
+        />
+        {route.params.attach.data.map(attach => (
+          <ListItem
+            style={{ backgroundColor: theme['background-basic-color-2'] }}
+            title={attach.name}
+            description={attach.description}
+            activeOpacity={0.4}
+            accessoryLeft={() => <AttachIcon img={attach.image}/>}
+            accessoryRight={() => <Radio
+              checked={checked == attach.name}
+              onChange={() => { setChecked(attach.name); setStats(attach.statBars); }}/>}
+            onPress={() => { setChecked(attach.name); setStats(attach.statBars); }}
+          />
+        ))}
+      </ScrollView>
+    </>
+  )
+};
+
+const AttachStack = ({ attachInfo, gun, stats, setter }) => {
+  const theme = useTheme();
+  
+  return (
+    <StackNav.Navigator screenOptions={{ headerShown: false }}>
+      <StackNav.Screen name='Slots' component={SlotsScreen} initialParams={{ attachInfo: attachInfo }}/>
+      <StackNav.Screen name='Selector' component={SelectorScreen} initialParams={{ gun: gun, stats: stats, setter: setter }} />
+    </StackNav.Navigator>
+  )
+};
 
 const AttachmentScreen = ({ navigation, route }) => (
   <>
