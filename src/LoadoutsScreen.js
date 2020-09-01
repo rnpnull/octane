@@ -275,7 +275,7 @@ const AssemblyScreen = ({ navigation, route }) => {
               <Text category='h6'>{PRIMARY[loadoutState.primary].title}</Text>
               <Image source={PRIMARY[loadoutState.primary].image} resizeMode='contain' style={{ width: 256, height: 128, alignSelf: 'center' }}/>
               <Text/>
-              <Button onPress={() => navigation.push('Gunsmith', { loadout: loadoutState })}>GUNSMITH</Button>
+              <Button onPress={() => navigation.push('Gunsmith', { loadout: loadoutState, setter: updateState })}>GUNSMITH</Button>
             </Card>
             { loadoutState.perk2 == 'OVERKILL' ?
             <>
@@ -285,7 +285,7 @@ const AssemblyScreen = ({ navigation, route }) => {
                 <Text category='h6'>{PRIMARY[loadoutState.overkill].title}</Text>
                 <Image source={PRIMARY[loadoutState.overkill].image} resizeMode='contain' style={{ width: 256, height: 128, alignSelf: 'center' }}/>
                 <Text/>
-                <Button onPress={() => navigation.push('Gunsmith', { loadout: loadoutState })}>GUNSMITH</Button>
+                <Button onPress={() => navigation.push('Gunsmith', { loadout: loadoutState, setter: updateState })}>GUNSMITH</Button>
               </Card>
             </>
             :
@@ -296,7 +296,7 @@ const AssemblyScreen = ({ navigation, route }) => {
                 <Text category='h6'>{SECONDARY[loadoutState.secondary].title}</Text>
                 <Image source={SECONDARY[loadoutState.secondary].image} resizeMode='contain' style={{ width: 256, height: 128, alignSelf: 'center' }}/>
                 <Text/>
-                <Button onPress={() => navigation.push('Gunsmith', { loadout: loadoutState })}>GUNSMITH</Button>
+                <Button onPress={() => navigation.push('Gunsmith', { loadout: loadoutState, setter: updateState })}>GUNSMITH</Button>
               </Card>
             </>
             }
@@ -382,14 +382,24 @@ const GunsmithScreen = ({ navigation, route }) => {
   
   useEffect(() => {
     if (!initState && attachInfo[0] != 'e') {
+      if ( !loadoutState.pAttach ) {
+        var pAttach = {};
+        for (var attach of attachInfo) {
+          pAttach[attach.type] = { name: 'None' };
+        }
+        var temp = loadoutState;
+        temp['pAttach'] = pAttach;
+        setLoadoutState(temp);
+      }
+
       setInit(true);
     }
   }, [attachInfo]);
 
   useEffect(() => {
-    console.log('changed stat');
-  }, [statState]);
-  
+    route.params.setter(loadoutState);
+  }, [loadoutState]);
+
   if ( !initState ) {
     return (
       <>
@@ -460,9 +470,12 @@ const GunsmithScreen = ({ navigation, route }) => {
           </Card>
           <Text/>
           <GunsmithContext.Provider
-            value={[ statState, setStatState ]}
+            value={{
+              stat: [ statState, setStatState ],
+              loadout: [ loadoutState, setLoadoutState ]
+            }}
           >
-            <AttachStack attachInfo={attachInfo} gun={loadoutState.primary} stats={statState} setter={setStatState}/>
+            <AttachStack attachInfo={attachInfo} gun={loadoutState.primary} state={loadoutState}/>
           </GunsmithContext.Provider>
         </Layout>
       </>
@@ -472,17 +485,21 @@ const GunsmithScreen = ({ navigation, route }) => {
 
 const SlotsScreen = ({ navigation, route }) => {
   const theme = useTheme();
-  const [ statState, setStatState ] = useContext(GunsmithContext);
+  
+  const { loadout } = useContext(GunsmithContext);
+  const [ loadoutState, setLoadoutState ] = loadout;
 
   const RightIcon = (props) => (
     <Icon {...props} name='chevron-right-outline'/>
   );
 
-  const testStat = () => {
-    let temp = statState;
-    temp['Accuracy'] += 1;
-    setStatState(temp);
-  };
+  const MinusIcon = (props) => (
+    <Icon {...props} name='minus-outline'/>
+  );
+
+  const AttachIcon = ({ props, img }) => (
+    <Image source={ATTACHIMG[route.params.gun][img]} resizeMode='contain' style={{ aspectRatio: 1, width: 40 }}/>
+  );
 
   return (
     <ScrollView style={{ backgroundColor: theme['background-basic-color-1'] }}>
@@ -490,19 +507,13 @@ const SlotsScreen = ({ navigation, route }) => {
         <ListItem
           style={{ backgroundColor: theme['background-basic-color-2'] }}
           title={attach.type}
-          description='None'
+          description={loadoutState.pAttach[attach.type]['name']}
           activeOpacity={0.4}
+          accessoryLeft={loadoutState.pAttach[attach.type]['name'] != 'None' ? () => <AttachIcon img={loadoutState.pAttach[attach.type]['image']}/> : MinusIcon}
           accessoryRight={RightIcon}
           onPress={() => navigation.push('Selector', { attach: attach })}
         />
       ))}
-      <ListItem
-        style={{ backgroundColor: theme['background-basic-color-2'] }}
-        title='Test'
-        activeOpacity={0.4}
-        accessoryRight={RightIcon}
-        onPress={() => testStat()}
-      />
     </ScrollView>
   )
 };
@@ -510,24 +521,40 @@ const SlotsScreen = ({ navigation, route }) => {
 const SelectorScreen = ({ navigation, route }) => {
   const theme = useTheme();
 
-  const [ checked, setChecked ] = React.useState('None');
+  const [ checked, setChecked ] = React.useState(route.params.loadout.pAttach[route.params.attach.type]['name']);
   const [ stats, setStats ] = React.useState([]);
-  const [ statState, setStatState ] = useContext(GunsmithContext);
+  const [ image, setImage ] = React.useState('');
+
+  const { stat } = useContext(GunsmithContext);
+  const [ statState, setStatState ] = stat;
+  const { loadout } = useContext(GunsmithContext);
+  const [ loadoutState, setLoadoutState ] = loadout;
+
+  const SlashIcon = (props) => (
+    <Icon {...props} name='slash-outline'/>
+  );
 
   const AttachIcon = ({ props, img }) => (
     <Image source={ATTACHIMG[route.params.gun][img]} resizeMode='contain' style={{ aspectRatio: 1, width: 40 }}/>
   );
 
   useEffect(() => {
-    if (checked == 'None') {
-      setStatState(statState);
-    } else {
-      let temp = statState;
-      for (let stat of stats) {
-        temp[stat.label] += stat.value;
-      }
-      setStatState(temp);
+    var temp = loadoutState;
+    temp.pAttach[route.params.attach.type]['name'] = checked;
+    if (checked != 'None') {
+      temp.pAttach[route.params.attach.type]['image'] = image;
     }
+    setLoadoutState(JSON.parse(JSON.stringify(temp)));
+
+    // if (checked == 'None') {
+    //   setStatState(statState);
+    // } else {
+    //   let temp = statState;
+    //   for (let stat of stats) {
+    //     temp[stat.label] += stat.value;
+    //   }
+    //   setStatState(JSON.parse(JSON.stringify(temp)));
+    // }
   }, [checked]);
 
   return (
@@ -542,7 +569,9 @@ const SelectorScreen = ({ navigation, route }) => {
         <ListItem
           style={{ backgroundColor: theme['background-basic-color-2'] }}
           title='None'
+          description='No attachment in this slot.'
           activeOpacity={0.4}
+          accessoryLeft={SlashIcon}
           accessoryRight={() => <Radio
             checked={checked == 'None'}
             onChange={() => setChecked('None')}/>}
@@ -557,8 +586,8 @@ const SelectorScreen = ({ navigation, route }) => {
             accessoryLeft={() => <AttachIcon img={attach.image}/>}
             accessoryRight={() => <Radio
               checked={checked == attach.name}
-              onChange={() => { setChecked(attach.name); setStats(attach.statBars); }}/>}
-            onPress={() => { setChecked(attach.name); setStats(attach.statBars); }}
+              onChange={() => { setChecked(attach.name); setStats(attach.statBars); setImage(attach.image); }}/>}
+            onPress={() => { setChecked(attach.name); setStats(attach.statBars); setImage(attach.image); }}
           />
         ))}
       </ScrollView>
@@ -566,13 +595,13 @@ const SelectorScreen = ({ navigation, route }) => {
   )
 };
 
-const AttachStack = ({ attachInfo, gun, stats, setter }) => {
+const AttachStack = ({ attachInfo, gun, state }) => {
   const theme = useTheme();
   
   return (
     <StackNav.Navigator screenOptions={{ headerShown: false }}>
-      <StackNav.Screen name='Slots' component={SlotsScreen} initialParams={{ attachInfo: attachInfo }}/>
-      <StackNav.Screen name='Selector' component={SelectorScreen} initialParams={{ gun: gun, stats: stats, setter: setter }} />
+      <StackNav.Screen name='Slots' component={SlotsScreen} initialParams={{ gun: gun, attachInfo: attachInfo, current: state }}/>
+      <StackNav.Screen name='Selector' component={SelectorScreen} initialParams={{ gun: gun, loadout: state }} />
     </StackNav.Navigator>
   )
 };
