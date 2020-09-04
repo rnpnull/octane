@@ -104,6 +104,8 @@ export default ({ route }) => {
               tempState.overkill = section.id;
             } else {
               tempState.primary = section.id;
+              if (tempState.hasOwnProperty('pAttach'))
+                delete tempState['pAttach'];
             }        
             route.params.buildSetter(tempState); 
             route.params.returnFunc();

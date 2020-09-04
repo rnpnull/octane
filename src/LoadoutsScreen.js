@@ -13,6 +13,7 @@ import { PrimaryWeaponsScreen, SecondaryWeaponsScreen } from './WeaponsScreen';
 import { Perk1Screen, Perk2Screen, Perk3Screen, LethalScreen, TacticalScreen } from './SelectorScreen';
 import { PRIMARY, SECONDARY, PERK1, PERK2, PERK3, LETHAL, TACTICAL } from './Equipment';
 import { ATTACHIMG } from './Gunsmith';
+import { acc } from 'react-native-reanimated';
 
 const TopNav = createMaterialTopTabNavigator();
 const StackNav = createStackNavigator();
@@ -366,11 +367,29 @@ const GunsmithScreen = ({ navigation, route }) => {
   const [ initState, setInit ] = useState(false);
   const [ weaponInfo, setWepInf ] = useState({});
   const [ attachInfo, setAttInf ] = useState(['e']);
+  const [ statLookup, setStatLookup ] = useState({});
+
+  const updateStats = () => {
+    var stats = {};
+    for (let type of Object.keys(statState)) {
+      stats[type] = 0;
+    }
+    for (let attachment of Object.keys(loadoutState.pAttach)) {
+      if (loadoutState.pAttach[attachment]['name'] != 'None') {
+        for (let stat of statLookup[attachment][loadoutState.pAttach[attachment]['name']]) {
+          stats[stat.label] += stat.value;
+        }
+      }
+    }
+    setStatState(JSON.parse(JSON.stringify(stats)));
+  }
 
   useEffect(() => {
     (async () => {
       if (!initState)
         setWepInf(PRIMARY[loadoutState.primary].info);
+      else
+        updateStats();
     })();
   }, [initState]);
 
@@ -383,6 +402,7 @@ const GunsmithScreen = ({ navigation, route }) => {
   useEffect(() => {
     if (!initState && attachInfo[0] != 'e') {
       if ( !loadoutState.pAttach ) {
+        console.log('constructing attach');
         var pAttach = {};
         for (var attach of attachInfo) {
           pAttach[attach.type] = { name: 'None' };
@@ -392,11 +412,24 @@ const GunsmithScreen = ({ navigation, route }) => {
         setLoadoutState(temp);
       }
 
+      const statDict = attachInfo.reduce((acc, type) => {
+        acc[type.type] = type.data.reduce((stats, attach) => {
+          stats[attach.name] = attach.statBars;
+          return stats;
+        }, {});
+        return acc;
+      }, {});
+      setStatLookup(statDict);
+
       setInit(true);
     }
   }, [attachInfo]);
 
   useEffect(() => {
+    if (initState) {
+      updateStats();
+    }
+
     route.params.setter(loadoutState);
   }, [loadoutState]);
 
@@ -437,9 +470,9 @@ const GunsmithScreen = ({ navigation, route }) => {
                 <View style={{ flex: 0.48 }}>
                   <View style={{ paddingBottom: 4, flexDirection: 'row', justifyContent: 'space-between' }}>
                     <Text style={{ fontWeight: 'bold' }}>{stat.label}</Text>
-                    <Text style={{ fontWeight: 'bold' }}>{stat.value + statState[stat.label]}</Text>
+                    <Text style={{ fontWeight: 'bold', color: (statState[stat.label] > 0 ? '#66FF66' : (statState[stat.label] < 0 ? '#FF6666' : '#FFFFFF')) }}>{stat.value + statState[stat.label]}</Text>
                   </View>
-                  <ProgressBar animated={false} color={theme['text-primary-color']} progress={(stat.value + statState[stat.label]) / 100} width={null} borderRadius={0} />
+                  <ProgressBar animated={true} color={theme['text-primary-color']} progress={(stat.value + statState[stat.label]) / 100} width={null} borderRadius={0} />
                 </View>
               ))}
             </View>
@@ -449,9 +482,9 @@ const GunsmithScreen = ({ navigation, route }) => {
                 <View style={{ flex: 0.48 }}>
                   <View style={{ paddingBottom: 4, flexDirection: 'row', justifyContent: 'space-between' }}>
                     <Text style={{ fontWeight: 'bold' }}>{stat.label}</Text>
-                    <Text style={{ fontWeight: 'bold' }}>{stat.value + statState[stat.label]}</Text>
+                    <Text style={{ fontWeight: 'bold', color: (statState[stat.label] > 0 ? '#66FF66' : (statState[stat.label] < 0 ? '#FF6666' : '#FFFFFF')) }}>{stat.value + statState[stat.label]}</Text>
                   </View>
-                  <ProgressBar animated={false} color={theme['text-primary-color']} progress={(stat.value + statState[stat.label]) / 100} width={null} borderRadius={0} />
+                  <ProgressBar animated={true} color={theme['text-primary-color']} progress={(stat.value + statState[stat.label]) / 100} width={null} borderRadius={0} />
                 </View>
               ))}
             </View>
@@ -461,9 +494,9 @@ const GunsmithScreen = ({ navigation, route }) => {
                 <View style={{ flex: 0.48 }}>
                   <View style={{ paddingBottom: 4, flexDirection: 'row', justifyContent: 'space-between' }}>
                     <Text style={{ fontWeight: 'bold' }}>{stat.label}</Text>
-                    <Text style={{ fontWeight: 'bold' }}>{stat.value + statState[stat.label]}</Text>
+                    <Text style={{ fontWeight: 'bold', color: (statState[stat.label] > 0 ? '#66FF66' : (statState[stat.label] < 0 ? '#FF6666' : '#FFFFFF')) }}>{stat.value + statState[stat.label]}</Text>
                   </View>
-                  <ProgressBar animated={false} color={theme['text-primary-color']} progress={(stat.value + statState[stat.label]) / 100} width={null} borderRadius={0} />
+                  <ProgressBar animated={true} color={theme['text-primary-color']} progress={(stat.value + statState[stat.label]) / 100} width={null} borderRadius={0} />
                 </View>
               ))}
             </View>
