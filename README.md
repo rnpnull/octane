@@ -1,6 +1,8 @@
 # Octane
 Modern Warfare/Warzone companion app to help players optimize their gameplay and compare their performance with others.
 
+**NO LONGER IN DEVELOPMENT // Partially complete here for demonstration/reference purposes.**
+
 ## Resources
 
 - https://cod.tracker.gg/warzone/db/battlepass?s=3
